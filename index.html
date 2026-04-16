@@ -1663,6 +1663,64 @@ CONFIG.productSystemMap = {
   "Microsoft Cloud for Sustainability": "azure",
   "Other": null
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   BPC → SA Component Mapping
+   Maps BPC L2 area IDs to specific SA component IDs.
+   This is the link between "what the business does" and "what tech implements it".
+   ═══════════════════════════════════════════════════════════════ */
+CONFIG.bpcMapping = {
+  // Source to Pay (75)
+  "75.1":  ["proc"],                        // Develop procurement strategy
+  "75.3":  ["proc"],                        // Manage supplier relationships
+  "75.35": ["proc"],                        // Source and contract goods
+  "75.4":  ["proc", "inv", "wms"],          // Procure goods and services
+  "75.5":  ["ap", "gl"],                    // Manage accounts payable
+  "75.8":  ["proc"],                        // Analyze procurement
+  // Order to Cash (65)
+  "65.05": ["sales", "pricing"],            // Develop sales policies
+  "65.2":  ["sales", "pricing", "inv", "wms"], // Manage sales orders
+  "65.3":  ["ar", "gl"],                    // Manage accounts receivable
+  "65.5":  ["ar"],                          // Manage credit and collections
+  "65.6":  ["ar", "gl"],                    // Analyze sales performance
+  // Record to Report (90)
+  "90.1":  ["gl", "fa", "budget", "tax"],   // Define accounting policies
+  "90.25": ["gl"],                          // Manage cash
+  "90.3":  ["budget", "gl"],                // Manage budgets
+  "90.5":  ["gl", "tax"],                   // Record financial transactions
+  "90.6":  ["gl"],                          // Close financial periods
+  "90.7":  ["gl"],                          // Analyze financial performance
+  // Inventory to Deliver (60)
+  "60.1":  ["wms"],                         // Manage warehouse operations
+  "60.2":  ["inv"],                         // Maintain inventory levels
+  "60.3":  ["inv", "wms"],                  // Process inbound goods
+  "60.4":  ["wms", "inv"],                  // Process outbound goods
+  "60.5":  ["qual", "inv"],                 // Manage inventory quality
+  "60.6":  ["transp"],                      // Manage freight
+  "60.8":  ["wms", "inv"],                  // Analyze warehouse
+  // Plan to Produce (70)
+  "70.1":  ["prod"],                        // Develop production strategies
+  "70.2":  ["mrp", "prod"],                 // Plan production
+  "70.3":  ["prod"],                        // Run production
+  "70.6":  ["qual", "prod"],                // Control production quality
+  "70.7":  ["prod"],                        // Analyze production
+  // Project to Profit (80)
+  "80.1":  ["projops"],                     // Develop project strategy
+  "80.2":  ["projops"],                     // Manage project contracts
+  "80.3":  ["projops"],                     // Plan projects
+  "80.4":  ["projops"],                     // Manage project delivery
+  "80.5":  ["projops", "gl"],               // Manage project financials
+  "80.6":  ["projops"],                     // Analyze project performance
+  // Hire to Retire (55)
+  "55.05": ["hr"],                          // Develop people strategy
+  "55.1":  ["hr"],                          // Recruit and onboard
+  "55.3":  ["hr"],                          // Workplace compliance
+  "55.4":  ["hr"],                          // Performance and growth
+  "55.5":  ["hr"],                          // Time and attendance
+  "55.7":  ["hr"],                          // Compensation and benefits
+  "55.8":  ["hr"],                          // Offboard
+  "55.9":  ["hr"]                           // Analyze HR
+};
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -1958,7 +2016,27 @@ CONFIG.productSystemMap = {
 
     el.addEventListener('mouseenter', (e) => showTooltip(e, comp, comp.system));
     el.addEventListener('mouseleave', hideTooltip);
-    el.addEventListener('click', () => openDetail(comp, `${layerName} \u203A ${groupName}`, comp.system));
+    el.addEventListener('click', (e) => {
+      if (e.shiftKey) {
+        // Shift-click: quick cycle status
+        const cycle = ['in-scope', 'future', 'out-scope'];
+        const cur = comp.status || 'in-scope';
+        const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+        comp.status = next;
+        el.dataset.status = next;
+        // Update status dot
+        let dot = el.querySelector('.status-dot');
+        if (next === 'in-scope') {
+          if (dot) dot.remove();
+        } else {
+          if (!dot) { dot = document.createElement('span'); el.appendChild(dot); }
+          dot.className = `status-dot ${next}`;
+        }
+        renderSummary();
+        return;
+      }
+      openDetail(comp, `${layerName} \u203A ${groupName}`, comp.system);
+    });
 
     return el;
   }
@@ -1975,8 +2053,9 @@ CONFIG.productSystemMap = {
     if (comp.desc) {
       html += `<div class="tooltip-desc">${comp.desc}</div>`;
     }
+    html += `<div class="tooltip-connections">Click for details \u00B7 Shift+click to cycle scope</div>`;
     if (connections.length > 0) {
-      html += `<div class="tooltip-connections">${connections.length} connection${connections.length > 1 ? 's' : ''} \u2014 click for details</div>`;
+      html += `<div class="tooltip-connections">${connections.length} connection${connections.length > 1 ? 's' : ''}</div>`;
     }
 
     tooltip.innerHTML = html;
@@ -2601,38 +2680,40 @@ CONFIG.productSystemMap = {
   // TAB 3: SCOPED BLUEPRINT
   // ═══════════════════════════════════════════════════════════════
 
-  function getScopedSystems() {
-    const systems = new Set();
+  // Get SA component IDs that are linked to scoped BPC processes via bpcMapping
+  function getScopedComponentIds() {
+    const compIds = new Set();
+    const mapping = CONFIG.bpcMapping || {};
     CONFIG.bpc.forEach(l1 => {
       l1.areas.forEach(l2 => {
-        l2.processes.forEach(l3 => {
+        // Check if any L3 process in this L2 area is scoped
+        const areaScoped = l2.processes.some(l3 => {
           const scope = state.bpcScope[l3.id];
-          if (scope === 'in-scope' || scope === 'future') {
-            (l3.products || []).forEach(prod => {
-              const sys = CONFIG.productSystemMap[prod];
-              if (sys) systems.add(sys);
-            });
-          }
+          return scope === 'in-scope' || scope === 'future';
         });
+        if (areaScoped && mapping[l2.id]) {
+          mapping[l2.id].forEach(id => compIds.add(id));
+        }
       });
     });
-    return systems;
+    return compIds;
   }
 
-  function getBpcProcessesForSystem(systemKey) {
+  // Get BPC L1 processes linked to a specific SA component ID
+  function getBpcProcessesForComponent(compId) {
     const processes = [];
+    const mapping = CONFIG.bpcMapping || {};
     CONFIG.bpc.forEach(l1 => {
       l1.areas.forEach(l2 => {
-        l2.processes.forEach(l3 => {
-          const scope = state.bpcScope[l3.id];
-          if (scope === 'in-scope' || scope === 'future') {
-            const prods = l3.products || [];
-            const mappedSystems = prods.map(p => CONFIG.productSystemMap[p]).filter(Boolean);
-            if (mappedSystems.includes(systemKey)) {
-              processes.push({ l1Name: l1.name, l1Id: l1.id, l3Name: l3.name, l3Id: l3.id, scope });
-            }
+        if (mapping[l2.id] && mapping[l2.id].includes(compId)) {
+          const areaScoped = l2.processes.some(l3 => {
+            const scope = state.bpcScope[l3.id];
+            return scope === 'in-scope' || scope === 'future';
+          });
+          if (areaScoped && !processes.find(p => p.l1Id === l1.id)) {
+            processes.push({ l1Name: l1.name, l1Id: l1.id, l2Name: l2.name, l2Id: l2.id });
           }
-        });
+        }
       });
     });
     return processes;
@@ -2642,23 +2723,22 @@ CONFIG.productSystemMap = {
     const container = $('#scopedBlueprintContainer');
     container.innerHTML = '';
 
-    const scopedSystems = getScopedSystems();
+    const scopedCompIds = getScopedComponentIds();
 
-    if (scopedSystems.size === 0) {
+    if (scopedCompIds.size === 0) {
       container.innerHTML = `<div class="scoped-empty"><strong>No processes scoped yet.</strong><br>Go to the BPC Process Scope tab and mark processes as in-scope or future to see relevant SA components here.</div>`;
       return;
     }
 
-    // For each layer, filter groups/components to only those matching scoped systems
+    // For each layer, filter groups/components to only those linked via bpcMapping
     CONFIG.layers.forEach(layer => {
       const filteredGroups = [];
 
       layer.groups.forEach(group => {
         if (group.children) {
-          // BPC drill-down group: filter children's components
           const filteredChildren = [];
           group.children.forEach(sub => {
-            const filteredComps = sub.components.filter(c => scopedSystems.has(c.system));
+            const filteredComps = sub.components.filter(c => scopedCompIds.has(c.id));
             if (filteredComps.length > 0) {
               filteredChildren.push({ ...sub, components: filteredComps });
             }
@@ -2667,7 +2747,7 @@ CONFIG.productSystemMap = {
             filteredGroups.push({ ...group, children: filteredChildren });
           }
         } else if (group.components) {
-          const filteredComps = group.components.filter(c => scopedSystems.has(c.system));
+          const filteredComps = group.components.filter(c => scopedCompIds.has(c.id));
           if (filteredComps.length > 0) {
             filteredGroups.push({ ...group, components: filteredComps });
           }
@@ -2676,16 +2756,16 @@ CONFIG.productSystemMap = {
 
       if (filteredGroups.length === 0) return;
 
-      // Collect BPC processes relevant to this layer's systems
-      const layerSystems = new Set();
+      // Collect BPC processes relevant to this layer's components via bpcMapping
+      const layerCompIds = new Set();
       filteredGroups.forEach(g => {
-        if (g.children) g.children.forEach(sub => sub.components.forEach(c => layerSystems.add(c.system)));
-        if (g.components) g.components.forEach(c => layerSystems.add(c.system));
+        if (g.children) g.children.forEach(sub => sub.components.forEach(c => layerCompIds.add(c.id)));
+        if (g.components) g.components.forEach(c => layerCompIds.add(c.id));
       });
 
       const bpcProcesses = [];
-      layerSystems.forEach(sys => {
-        getBpcProcessesForSystem(sys).forEach(p => {
+      layerCompIds.forEach(compId => {
+        getBpcProcessesForComponent(compId).forEach(p => {
           if (!bpcProcesses.find(x => x.l1Id === p.l1Id)) {
             bpcProcesses.push(p);
           }

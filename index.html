@@ -1,0 +1,2827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solution Architecture Blueprint — Scoping Tool</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* Page */
+  --page-bg: #e8ecf2;
+  --page-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Blueprint frame */
+  --frame-bg: #edf1f6;
+  --frame-border: #b8c4d0;
+  --frame-shadow: 0 2px 24px rgba(0,0,0,0.10);
+  --frame-radius: 6px;
+
+  /* Header bar inside blueprint */
+  --header-bg: #1e3a5f;
+  --header-text: #ffffff;
+  --badge-bg: #8b2e2e;
+  --badge-text: #ffffff;
+
+  /* Layer bands - graduated depth */
+  --layer-bg-1: #f0f4f8;
+  --layer-bg-2: #e4ecf4;
+  --layer-bg-3: #d8e2ee;
+  --layer-bg-4: #ccd8e8;
+  --layer-bg-5: #c0cee0;
+  --layer-bg-6: #b4c4d8;
+  --layer-border: rgba(0,0,0,0.06);
+  --layer-label-color: #3d5068;
+
+  /* Group containers */
+  --group-border: rgba(0,0,0,0.12);
+  --group-bg: rgba(255,255,255,0.35);
+  --group-label: #4a6078;
+  --group-radius: 6px;
+
+  /* System type colors */
+  --sys-d365fo: #2b5797;
+  --sys-d365fo-hover: #3668ab;
+  --sys-d365ce: #5b6abf;
+  --sys-d365ce-hover: #6d7bd0;
+  --sys-power: #7b2d8e;
+  --sys-power-hover: #8f3da3;
+  --sys-azure: #0078d4;
+  --sys-azure-hover: #1a8ae6;
+  --sys-fabric: #1b7d62;
+  --sys-fabric-hover: #239b7a;
+  --sys-external: #8c4a2f;
+  --sys-external-hover: #a25a3c;
+  --sys-custom: #2d5f6b;
+  --sys-custom-hover: #3a7a89;
+  --sys-infra: #475569;
+  --sys-infra-hover: #5a6b7e;
+  --sys-config: #5c6d3f;
+  --sys-config-hover: #6f8250;
+  --sys-isv: #8b6914;
+  --sys-isv-hover: #a37e1e;
+  --sys-pingala: #0d7e4a;
+  --sys-pingala-hover: #10a05e;
+
+  /* Sidebar */
+  --sidebar-left-bg: #1e4d4d;
+  --sidebar-right-bg: #f5ecd7;
+  --sidebar-right-border: #d4c9a8;
+
+  /* Interactive */
+  --focus-ring: rgba(43, 87, 151, 0.5);
+  --tooltip-bg: #1a2332;
+  --tooltip-text: #f0f4f8;
+  --detail-bg: #ffffff;
+  --detail-shadow: -4px 0 24px rgba(0,0,0,0.12);
+
+  /* Spacing */
+  --sp-xs: 4px;
+  --sp-sm: 8px;
+  --sp-md: 14px;
+  --sp-lg: 20px;
+  --sp-xl: 28px;
+
+  /* Component box */
+  --comp-w: 132px;
+  --comp-h: 36px;
+  --comp-radius: 4px;
+  --comp-font: 10.5px;
+  --comp-gap: 6px;
+
+  /* BPC scope colors */
+  --scope-in: #10b981;
+  --scope-future: #3b82f6;
+  --scope-out: #d1d5db;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--page-font);
+  background: var(--page-bg);
+  color: #1a2332;
+  min-height: 100vh;
+  padding: 0;
+}
+button { font-family: inherit; cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB BAR
+   ═══════════════════════════════════════════════════════════════ */
+.tab-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid #d4dae2;
+  display: flex;
+  align-items: stretch;
+  padding: 0 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.tab-btn {
+  position: relative;
+  padding: 14px 24px 12px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7c8d;
+  letter-spacing: 0.1px;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: #1e3a5f; }
+.tab-btn.active {
+  color: #1e3a5f;
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: var(--header-bg);
+  border-radius: 3px 3px 0 0;
+}
+.tab-btn .tab-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #e8ecf2;
+  color: #6b7c8d;
+}
+.tab-btn.active .tab-badge {
+  background: var(--header-bg);
+  color: #fff;
+}
+
+/* Tab pane visibility */
+.tab-pane { display: none; padding: 24px; }
+.tab-pane.active { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TOP TOOLBAR (shared style for Tab 1 and Tab 2/3)
+   ═══════════════════════════════════════════════════════════════ */
+.toolbar {
+  max-width: 1800px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.toolbar-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-right: auto;
+  letter-spacing: -0.3px;
+}
+.search-box {
+  position: relative;
+}
+.search-box input {
+  padding: 7px 12px 7px 30px;
+  border: 1px solid #c4cdd6;
+  border-radius: 6px;
+  font-size: 12px;
+  width: 200px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24' stroke='%238899aa' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") 9px center/14px no-repeat;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-box input:focus {
+  outline: none;
+  border-color: var(--sys-d365fo);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.filter-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.filter-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 7px;
+  border-radius: 6px;
+  border: 1.5px solid #dde2e8;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  background: #fff;
+  color: #4a5568;
+  cursor: pointer;
+  user-select: none;
+}
+.filter-pill .swatch {
+  width: 14px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.filter-pill.active {
+  border-color: var(--pill-color, #bbb);
+  box-shadow: inset 3px 0 0 var(--pill-color, #bbb);
+  background: #fff;
+}
+.filter-pill.dimmed {
+  opacity: 0.25;
+  border-color: #e8ecf0;
+  box-shadow: none;
+}
+.view-toggle {
+  padding: 6px 14px;
+  border: 1px solid #c4cdd6;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #fff;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+.view-toggle:hover { background: #f0f4f8; }
+.view-toggle.active { background: var(--sys-d365fo); color: #fff; border-color: var(--sys-d365fo); }
+
+/* Flow type toggles */
+.flow-toggles {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 3px 3px 8px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  border: 1px solid #e2e6ea;
+}
+.flow-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #8899aa;
+  padding-right: 4px;
+}
+.flow-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  background: transparent;
+  color: #6b7c8d;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.flow-btn:hover { background: rgba(0,0,0,0.06); }
+.flow-btn.active { color: #fff; }
+.flow-btn[data-type="data"].active { background: #e63946; }
+.flow-btn[data-type="integration"].active { background: #f77f00; }
+.flow-btn[data-type="external"].active { background: #d62ad0; }
+
+/* ═══════════════════════════════════════════════════════════════
+   BLUEPRINT FRAME
+   ═══════════════════════════════════════════════════════════════ */
+.blueprint {
+  max-width: 1800px;
+  margin: 0 auto;
+  background: var(--frame-bg);
+  border: 1px solid var(--frame-border);
+  border-radius: var(--frame-radius);
+  box-shadow: var(--frame-shadow);
+  overflow: hidden;
+}
+
+/* Blueprint internal header */
+.bp-header {
+  background: var(--header-bg);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.bp-header-bar {
+  width: 4px;
+  height: 36px;
+  background: #4e9fd5;
+  border-radius: 2px;
+}
+.bp-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--header-text);
+  letter-spacing: -0.4px;
+}
+.bp-subtitle {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 2px;
+}
+.bp-badge {
+  padding: 5px 16px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+/* Blueprint body: sidebars + layers */
+.bp-body {
+  display: grid;
+  grid-template-columns: 190px 1fr 190px;
+  min-height: 500px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SIDEBARS
+   ═══════════════════════════════════════════════════════════════ */
+.sidebar {
+  padding: var(--sp-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+.sidebar-left {
+  background: var(--sidebar-left-bg);
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+.sidebar-right {
+  background: var(--sidebar-right-bg);
+  border-left: 1px solid var(--sidebar-right-border);
+}
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+.sidebar-left .sidebar-title {
+  color: rgba(255,255,255,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.sidebar-right .sidebar-title {
+  color: var(--sys-external);
+  border-bottom: 1px solid rgba(140,74,47,0.2);
+}
+.sidebar-item {
+  padding: 10px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sidebar-left .sidebar-item {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-left .sidebar-item:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.2);
+}
+.sidebar-left .sidebar-item-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.sidebar-left .sidebar-item-desc {
+  font-size: 9.5px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.sidebar-right .sidebar-item {
+  background: rgba(140,74,47,0.06);
+  border: 1px solid rgba(140,74,47,0.12);
+}
+.sidebar-right .sidebar-item:hover {
+  background: rgba(140,74,47,0.12);
+  border-color: rgba(140,74,47,0.2);
+}
+.sidebar-right .sidebar-item-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #5a3420;
+}
+.sidebar-right .sidebar-item-desc {
+  font-size: 9.5px;
+  color: #8c6e5a;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYERS
+   ═══════════════════════════════════════════════════════════════ */
+.layers-stack {
+  display: flex;
+  flex-direction: column;
+}
+.layer {
+  padding: var(--sp-md) var(--sp-lg);
+  border-bottom: 1px solid var(--layer-border);
+  position: relative;
+  animation: layerFadeIn 0.5s ease both;
+}
+.layer:last-child { border-bottom: none; }
+
+.layer-accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+.layer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--sp-sm);
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 6px 2px 0;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.layer-header:hover { background: rgba(0,0,0,0.03); }
+.layer-chevron {
+  font-size: 11px;
+  color: var(--layer-label-color);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  opacity: 0.5;
+}
+.layer.collapsed .layer-chevron { transform: rotate(-90deg); }
+.layer-name {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--layer-label-color);
+}
+.layer-subtitle {
+  font-size: 10px;
+  color: #8899aa;
+  font-style: italic;
+}
+.layer-count {
+  margin-left: auto;
+  font-size: 10px;
+  color: #8899aa;
+  font-weight: 500;
+  background: rgba(0,0,0,0.04);
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+.layer-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.layer.collapsed .layer-collapse {
+  grid-template-rows: 0fr;
+}
+.layer.collapsed { padding-bottom: 6px; }
+.layer-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+  align-items: flex-start;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GROUPS
+   ═══════════════════════════════════════════════════════════════ */
+.group {
+  border: 1px solid var(--group-border);
+  border-radius: var(--group-radius);
+  background: var(--group-bg);
+  padding: var(--sp-sm);
+  min-width: 140px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.group:hover { border-color: rgba(0,0,0,0.2); }
+.group-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--group-label);
+  margin-bottom: 5px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.group-components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--comp-gap);
+}
+.group.wide { flex: 1; min-width: 280px; }
+.group.full { flex: 1 1 100%; }
+
+/* BPC drill-down: expandable groups with children */
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  padding: 1px 0;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+.group-header:hover { background: rgba(0,0,0,0.03); }
+.group-chevron {
+  font-size: 9px;
+  color: var(--group-label);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.group.g-collapsed .group-chevron { transform: rotate(-90deg); }
+.group-summary {
+  margin-left: auto;
+  font-size: 8.5px;
+  color: #8899aa;
+  font-weight: 500;
+}
+.group-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.group.g-collapsed .group-collapse {
+  grid-template-rows: 0fr;
+}
+.group-children {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 4px;
+}
+.subgroup {
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.3);
+  padding: 5px 6px;
+}
+.subgroup-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--group-label);
+  opacity: 0.65;
+  margin-bottom: 4px;
+}
+.subgroup .group-components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--comp-gap);
+}
+.bpc-id {
+  font-size: 8px;
+  color: #8899aa;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT BOXES
+   ═══════════════════════════════════════════════════════════════ */
+.comp {
+  width: var(--comp-w);
+  height: var(--comp-h);
+  border-radius: var(--comp-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--comp-font);
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.25s ease;
+  line-height: 1.25;
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.comp::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.comp:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+.comp:active { transform: translateY(0) scale(0.98); }
+.comp.active {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--focus-ring), 0 6px 20px rgba(0,0,0,0.2);
+  z-index: 11;
+}
+.comp.dimmed { opacity: 0.15; transform: none; pointer-events: none; }
+.comp.highlight {
+  animation: compPulse 0.8s ease;
+  outline: 2px solid #ffd700;
+  outline-offset: 1px;
+}
+
+/* Small text label underneath component */
+.comp-sub {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  font-size: 8px;
+  font-weight: 400;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+/* Status badges */
+.comp .status-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.status-dot.in-scope { background: #10b981; }
+.status-dot.future { background: #3b82f6; }
+.status-dot.out-scope { background: #94a3b8; }
+.status-dot.isv { background: #8b5cf6; }
+
+/* Status-based component visual treatment */
+.comp[data-status="future"] {
+  border: 2px dashed rgba(255,255,255,0.5);
+}
+.comp[data-status="out-scope"] {
+  opacity: 0.38;
+  filter: grayscale(35%);
+}
+.comp[data-status="isv"] {
+  border-bottom: 3px solid #8b5cf6;
+}
+
+/* Compact variant for dense grids */
+.comp.compact {
+  width: 110px;
+  height: 36px;
+  font-size: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+.bp-footer {
+  padding: 10px 24px;
+  background: rgba(0,0,0,0.03);
+  border-top: 1px solid var(--layer-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.status-legend {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 6px;
+  border-radius: 6px;
+  border: 1.5px solid #dde2e8;
+  font-size: 10px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  user-select: none;
+  font-family: inherit;
+}
+.status-toggle:hover { background: #f7f8fa; }
+.status-toggle .status-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.status-toggle.active {
+  border-color: var(--status-color, #bbb);
+  box-shadow: inset 2px 0 0 var(--status-color, #bbb);
+}
+.status-toggle.dimmed {
+  opacity: 0.25;
+  border-color: #e8ecf0;
+  box-shadow: none;
+}
+.bp-meta {
+  font-size: 10px;
+  color: #8899aa;
+}
+.bp-summary {
+  font-size: 11px;
+  color: #4a5568;
+}
+.bp-summary strong {
+  font-weight: 700;
+  color: #2d3748;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLTIP
+   ═══════════════════════════════════════════════════════════════ */
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 280px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  line-height: 1.4;
+}
+.tooltip.visible { opacity: 1; transform: translateY(0); }
+.tooltip-name {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.tooltip-system {
+  font-size: 10px;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.tooltip-desc { font-size: 11px; opacity: 0.85; }
+.tooltip-connections {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL PANEL (slide-in)
+   ═══════════════════════════════════════════════════════════════ */
+.detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: var(--detail-bg);
+  box-shadow: var(--detail-shadow);
+  z-index: 500;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+.detail-panel.open { transform: translateX(0); }
+.detail-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f0f2f5;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.detail-close:hover { background: #e2e6ea; }
+.detail-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e8ecf0;
+}
+.detail-system-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.detail-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a2332;
+  margin-bottom: 4px;
+}
+.detail-group-path {
+  font-size: 11px;
+  color: #8899aa;
+}
+.detail-body {
+  padding: 20px 24px;
+}
+.detail-section {
+  margin-bottom: 20px;
+}
+.detail-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #8899aa;
+  margin-bottom: 8px;
+}
+.detail-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4a5568;
+}
+.detail-conn-list {
+  list-style: none;
+}
+.detail-conn-item {
+  padding: 8px 12px;
+  border: 1px solid #e8ecf0;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-conn-arrow {
+  color: #c4cdd6;
+  font-size: 14px;
+}
+.detail-conn-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+.detail-conn-label {
+  font-size: 10px;
+  color: #8899aa;
+  margin-left: auto;
+}
+.detail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.detail-tag {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #f0f4f8;
+  color: #4a6078;
+}
+.status-cycler {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #dde2e8;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+  font-family: inherit;
+}
+.status-cycler:hover { background: #f7f8fa; }
+.status-cycler .status-dot-lg {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.status-cycler-hint {
+  font-size: 9px;
+  color: #8899aa;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SVG CONNECTIONS OVERLAY
+   ═══════════════════════════════════════════════════════════════ */
+.connections-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.connections-overlay.visible { opacity: 1; }
+.conn-line {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  animation: flowDash 2s linear infinite;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+.conn-line.data { stroke: #e63946; stroke-dasharray: none; }
+.conn-line.integration { stroke: #f77f00; stroke-dasharray: 12 4; }
+.conn-line.external { stroke: #d62ad0; stroke-dasharray: 4 4; }
+.conn-label {
+  font-family: var(--page-font);
+  font-size: 10px;
+  fill: #1a2332;
+  font-weight: 700;
+  paint-order: stroke fill;
+  stroke: rgba(255,255,255,0.95);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BPC TREE (Tab 2)
+   ═══════════════════════════════════════════════════════════════ */
+.bpc-summary-bar {
+  max-width: 1800px;
+  margin: 0 auto 16px;
+  padding: 10px 18px;
+  background: #fff;
+  border: 1px solid #d4dae2;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.bpc-summary-bar .bpc-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+.bpc-summary-bar .bpc-stat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.bpc-tree-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bpc-l1-card {
+  background: var(--frame-bg);
+  border: 1px solid var(--frame-border);
+  border-radius: var(--frame-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.bpc-l1-header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bpc-l1-id {
+  font-size: 18px;
+  font-weight: 800;
+  opacity: 0.5;
+}
+.bpc-l1-name {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+.bpc-l1-actions {
+  display: flex;
+  gap: 6px;
+}
+.bpc-l1-actions button {
+  padding: 4px 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.bpc-l1-actions button:hover { background: rgba(255,255,255,0.2); }
+.bpc-l1-body {
+  padding: 8px 12px;
+}
+.bpc-l2-row {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.bpc-l2-row:last-child { border-bottom: none; }
+.bpc-l2-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.bpc-l2-header:hover { background: rgba(0,0,0,0.03); }
+.bpc-l2-chevron {
+  font-size: 10px;
+  color: #8899aa;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+.bpc-l2-row.l2-collapsed .bpc-l2-chevron { transform: rotate(-90deg); }
+.bpc-l2-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2d3748;
+  flex: 1;
+}
+.bpc-l2-count {
+  font-size: 10px;
+  color: #8899aa;
+  padding: 1px 8px;
+  background: rgba(0,0,0,0.04);
+  border-radius: 8px;
+}
+.bpc-l2-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bpc-l2-row.l2-collapsed .bpc-l2-collapse {
+  grid-template-rows: 0fr;
+}
+.bpc-l3-list {
+  overflow: hidden;
+  min-height: 0;
+  padding: 0 0 4px 22px;
+}
+.bpc-l3-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.bpc-l3-item:hover { background: rgba(0,0,0,0.03); }
+.bpc-scope-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.bpc-scope-dot:hover { transform: scale(1.2); }
+.bpc-scope-dot[data-scope="in-scope"] { background: var(--scope-in); border-color: var(--scope-in); }
+.bpc-scope-dot[data-scope="future"] { background: var(--scope-future); border-color: var(--scope-future); }
+.bpc-scope-dot[data-scope="out-scope"] { background: var(--scope-out); border-color: #bbb; }
+.bpc-l3-name {
+  font-size: 12px;
+  color: #2d3748;
+  flex: 1;
+}
+.bpc-l3-products {
+  font-size: 10px;
+  color: #8899aa;
+  max-width: 300px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bpc-l3-item.bpc-hidden { display: none; }
+.bpc-l2-row.bpc-hidden { display: none; }
+.bpc-l1-card.bpc-hidden { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SCOPED BLUEPRINT (Tab 3)
+   ═══════════════════════════════════════════════════════════════ */
+.scoped-empty {
+  max-width: 1800px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 60px 24px;
+  background: #fff;
+  border: 1px solid #d4dae2;
+  border-radius: 6px;
+  color: #8899aa;
+  font-size: 14px;
+}
+.scoped-empty strong { color: #4a5568; }
+.bpc-process-header {
+  max-width: 1800px;
+  margin: 0 auto 4px;
+  padding: 6px 14px;
+  background: var(--header-bg);
+  color: var(--header-text);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+.bpc-process-header .bpc-ph-id {
+  opacity: 0.5;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes layerFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes compPulse {
+  0%, 100% { outline-color: #ffd700; }
+  50% { outline-color: #ff8c00; }
+}
+@keyframes flowDash {
+  to { stroke-dashoffset: -20; }
+}
+
+/* Staggered layer entrance */
+.layer:nth-child(1) { animation-delay: 0.05s; }
+.layer:nth-child(2) { animation-delay: 0.12s; }
+.layer:nth-child(3) { animation-delay: 0.19s; }
+.layer:nth-child(4) { animation-delay: 0.26s; }
+.layer:nth-child(5) { animation-delay: 0.33s; }
+.layer:nth-child(6) { animation-delay: 0.40s; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 1400px) {
+  .bp-body { grid-template-columns: 160px 1fr 160px; }
+  :root { --comp-w: 108px; --comp-h: 32px; --comp-font: 9.5px; }
+}
+@media (max-width: 1100px) {
+  .bp-body { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT — only print the active tab
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  body { padding: 0; background: #fff; }
+  .tab-bar { display: none; }
+  .toolbar { display: none; }
+  .detail-panel { display: none; }
+  .tooltip { display: none; }
+  .tab-pane { display: none !important; }
+  .tab-pane.active { display: block !important; }
+  .blueprint { box-shadow: none; border: 1px solid #ccc; }
+  .comp { break-inside: avoid; }
+  .layer { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TAB BAR
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="tab-sa">Solution Architecture</button>
+  <button class="tab-btn" data-tab="tab-bpc">BPC Process Scope</button>
+  <button class="tab-btn" data-tab="tab-scoped">Scoped Blueprint</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TAB 1: SOLUTION ARCHITECTURE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane active" id="tab-sa">
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-title">Solution Architecture</div>
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search components..." autocomplete="off" />
+    </div>
+    <div class="filter-pills" id="filters"></div>
+    <button class="view-toggle" id="scopeOnly" title="Show only in-scope components">Scope Only</button>
+    <button class="view-toggle" id="exportScope" title="Export current scope as JSON">Export Scope</button>
+    <button class="view-toggle" id="resetAll" title="Reset all filters">Reset</button>
+    <button class="view-toggle" id="expandAll">Expand All</button>
+    <button class="view-toggle" id="collapseAll">Collapse All</button>
+    <div class="flow-toggles">
+      <span class="flow-label">Flows</span>
+      <button class="flow-btn" data-type="data">Data</button>
+      <button class="flow-btn" data-type="integration">Integration</button>
+      <button class="flow-btn" data-type="external">External</button>
+    </div>
+  </div>
+
+  <div class="blueprint" id="blueprint" style="position: relative;">
+    <div class="bp-header">
+      <div class="bp-header-left">
+        <div class="bp-header-bar"></div>
+        <div>
+          <div class="bp-title" id="bpTitle"></div>
+          <div class="bp-subtitle" id="bpSubtitle"></div>
+        </div>
+      </div>
+      <div class="bp-badge" id="bpBadge"></div>
+    </div>
+    <div class="bp-body">
+      <div class="sidebar sidebar-left" id="sidebarLeft"></div>
+      <div class="layers-stack" id="layersStack"></div>
+      <div class="sidebar sidebar-right" id="sidebarRight"></div>
+    </div>
+    <div class="bp-footer">
+      <div class="bp-summary" id="bpSummary"></div>
+      <div class="status-legend" id="statusLegend"></div>
+      <div class="bp-meta" id="bpMeta"></div>
+    </div>
+    <svg class="connections-overlay" id="connectionsOverlay"></svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TAB 2: BPC PROCESS SCOPE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-bpc">
+  <div class="toolbar">
+    <div class="toolbar-title">BPC Process Scope</div>
+    <div class="search-box">
+      <input type="text" id="bpcSearch" placeholder="Search processes..." autocomplete="off" />
+    </div>
+    <button class="view-toggle" id="bpcExpandAll">Expand All</button>
+    <button class="view-toggle" id="bpcCollapseAll">Collapse All</button>
+  </div>
+  <div class="bpc-summary-bar" id="bpcSummaryBar"></div>
+  <div class="bpc-tree-container" id="bpcTreeContainer"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TAB 3: SCOPED BLUEPRINT
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-scoped">
+  <div class="toolbar">
+    <div class="toolbar-title">Scoped Blueprint</div>
+    <button class="view-toggle" id="scopedExport" title="Export scope data as JSON">Export Scope</button>
+    <button class="view-toggle" id="scopedExpandAll">Expand All</button>
+    <button class="view-toggle" id="scopedCollapseAll">Collapse All</button>
+  </div>
+  <div id="scopedBlueprintContainer"></div>
+</div>
+
+<!-- Shared: Detail panel -->
+<div class="detail-panel" id="detailPanel">
+  <button class="detail-close" id="detailClose">&times;</button>
+  <div id="detailContent"></div>
+</div>
+
+<!-- Shared: Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONFIGURATION — Replace this block for each project
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+const CONFIG = {
+  meta: {
+    title: "Project End-state Roadmap",
+    subtitle: "Application Architecture \u2014 Target State",
+    badge: "SOLUTION BLUEPRINT",
+    version: "2.0",
+    date: "April 2026",
+    viewpoint: "Application Architecture"
+  },
+
+  systems: {
+    d365fo:   { name: "Dynamics 365 F&O",   color: "var(--sys-d365fo)",   hoverColor: "var(--sys-d365fo-hover)" },
+    d365ce:   { name: "Dynamics 365 CE",     color: "var(--sys-d365ce)",   hoverColor: "var(--sys-d365ce-hover)" },
+    power:    { name: "Power Platform",      color: "var(--sys-power)",    hoverColor: "var(--sys-power-hover)" },
+    azure:    { name: "Azure Services",      color: "var(--sys-azure)",    hoverColor: "var(--sys-azure-hover)" },
+    fabric:   { name: "Microsoft Fabric",    color: "var(--sys-fabric)",   hoverColor: "var(--sys-fabric-hover)" },
+    external: { name: "External System",     color: "var(--sys-external)", hoverColor: "var(--sys-external-hover)" },
+    custom:   { name: "Custom Development",  color: "var(--sys-custom)",   hoverColor: "var(--sys-custom-hover)" },
+    infra:    { name: "Infrastructure",      color: "var(--sys-infra)",    hoverColor: "var(--sys-infra-hover)" },
+    config:   { name: "Configuration",       color: "var(--sys-config)",   hoverColor: "var(--sys-config-hover)" },
+    isv:      { name: "ISV Solution",        color: "var(--sys-isv)",      hoverColor: "var(--sys-isv-hover)" },
+    pingala:  { name: "Pingala Accelerator", color: "var(--sys-pingala)",  hoverColor: "var(--sys-pingala-hover)" }
+  },
+
+  layers: [
+    {
+      id: "d365modules",
+      name: "D365 Functional Modules",
+      subtitle: "Finance & Operations application modules in scope",
+      bg: "var(--layer-bg-1)",
+      accent: "var(--sys-d365fo)",
+      groups: [
+        {
+          name: "Finance",
+          components: [
+            { id: "gl",      name: "General Ledger",   system: "d365fo", status: "in-scope", desc: "Chart of accounts, journals, allocations, financial dimensions, consolidation" },
+            { id: "ap",      name: "Accounts Payable",  system: "d365fo", status: "in-scope", desc: "Vendor invoices, payment proposals, settlements, aging, 3-way matching" },
+            { id: "ar",      name: "Accounts Recv.",    system: "d365fo", status: "in-scope", desc: "Customer invoicing, collections, credit management, payment journals" },
+            { id: "fa",      name: "Fixed Assets",      system: "d365fo", status: "in-scope", desc: "Asset lifecycle, depreciation books, revaluation, disposal" },
+            { id: "budget",  name: "Budgeting",         system: "d365fo", status: "in-scope", desc: "Budget planning, budget control, forecast positions, allocation rules" },
+            { id: "tax",     name: "Tax Engine",        system: "isv",    status: "isv",      desc: "Vertex or Avalara tax calculation, compliance reporting, e-invoicing" }
+          ]
+        },
+        {
+          name: "Supply Chain",
+          components: [
+            { id: "proc",    name: "Procurement",       system: "d365fo", status: "in-scope", desc: "Purchase requisitions, RFQs, purchase orders, vendor collaboration" },
+            { id: "sales",   name: "Sales Orders",      system: "d365fo", status: "in-scope", desc: "Quotations, order entry, allocation, picking, packing, invoicing" },
+            { id: "pricing", name: "Pricing Engine",    system: "d365fo", status: "in-scope", desc: "Trade agreements, price groups, discounts, rebates" },
+            { id: "inv",     name: "Inventory Mgmt",    system: "d365fo", status: "in-scope", desc: "On-hand management, reservations, quality management, batch/serial tracking" },
+            { id: "wms",     name: "WMS Advanced",      system: "d365fo", status: "in-scope", desc: "Wave processing, work creation, mobile device flows, location directives" },
+            { id: "transp",  name: "Transport Mgmt",    system: "d365fo", status: "future",   desc: "Load planning, rate routing, freight reconciliation" }
+          ]
+        },
+        {
+          name: "Manufacturing",
+          components: [
+            { id: "prod",    name: "Production",        system: "d365fo", status: "in-scope", desc: "Production orders, BOMs, routes, shop floor execution" },
+            { id: "mrp",     name: "Master Planning",   system: "d365fo", status: "in-scope", desc: "MRP runs, planned orders, demand forecasting, safety stock" },
+            { id: "qual",    name: "Quality Mgmt",      system: "d365fo", status: "future",   desc: "Quality orders, test groups, non-conformance, quarantine" }
+          ]
+        },
+        {
+          name: "Project & HR",
+          components: [
+            { id: "projops", name: "Project Ops",       system: "d365fo", status: "in-scope", desc: "Project contracts, WBS, timesheets, expense management" },
+            { id: "hr",      name: "Human Resources",   system: "d365fo", status: "out-scope", desc: "Worker management, benefits, leave, compensation" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "d365toolbox",
+      name: "D365 Configuration & Toolbox",
+      subtitle: "Platform capabilities, data management, extensibility",
+      bg: "var(--layer-bg-2)",
+      accent: "var(--sys-config)",
+      groups: [
+        {
+          name: "Data Management",
+          components: [
+            { id: "dmf",    name: "Data Entities",   system: "d365fo", status: "in-scope", desc: "DMF framework, composite entities, recurring integrations, staging" },
+            { id: "odata",  name: "OData / REST",    system: "d365fo", status: "in-scope", desc: "RESTful endpoints, batch operations, change tracking" },
+            { id: "dualwr", name: "Dual-write",      system: "d365fo", status: "in-scope", desc: "Near real-time sync between F&O and Dataverse" },
+            { id: "cdc",    name: "Change Tracking",  system: "d365fo", status: "in-scope", desc: "Incremental sync via SQL change tracking on data entities" }
+          ]
+        },
+        {
+          name: "Platform Config",
+          components: [
+            { id: "featmgmt",name: "Feature Mgmt",   system: "config", status: "in-scope", desc: "Feature flighting, preview features, one version policy" },
+            { id: "legal",  name: "Legal Entities",  system: "config", status: "in-scope", desc: "Multi-company setup, shared data policies, number sequences" },
+            { id: "security",name: "Security Roles",  system: "config", status: "in-scope", desc: "Duties, privileges, role-based access, SoD analysis" },
+            { id: "wf",     name: "Workflow",        system: "config", status: "in-scope", desc: "Approval workflows, conditional routing, escalation" }
+          ]
+        },
+        {
+          name: "Dev & Extensibility",
+          wide: true,
+          components: [
+            { id: "ext",    name: "Extensions / X++", system: "d365fo", status: "in-scope", desc: "CoC, augmentation, event handlers \u2014 no overlayering" },
+            { id: "lcs",    name: "LCS / Admin",     system: "d365fo", status: "in-scope", desc: "Lifecycle Services, environment mgmt, telemetry, updates" },
+            { id: "er",     name: "Electronic Rep.",  system: "d365fo", status: "in-scope", desc: "ER format designer, configurable reporting, regulatory updates" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "power",
+      name: "Power Platform & Custom Apps",
+      subtitle: "Low-code extensions, process automation, citizen dev",
+      bg: "var(--layer-bg-3)",
+      accent: "var(--sys-power)",
+      groups: [
+        {
+          name: "Power Apps",
+          components: [
+            { id: "modelapp",name: "Model-driven",   system: "power", status: "in-scope", desc: "Dataverse-backed apps for structured data, forms, views" },
+            { id: "canvas", name: "Canvas Apps",     system: "power", status: "in-scope", desc: "Pixel-perfect mobile/tablet apps, connectors, offline" },
+            { id: "portal", name: "Power Pages",     system: "power", status: "future",   desc: "External-facing portals, authentication, web forms" }
+          ]
+        },
+        {
+          name: "Automation",
+          components: [
+            { id: "pacloud",name: "Cloud Flows",     system: "power", status: "in-scope", desc: "Event-driven automation, approval flows, 1000+ connectors" },
+            { id: "padesk", name: "Desktop Flows",   system: "power", status: "future",   desc: "RPA for legacy systems, UI automation, attended/unattended" },
+            { id: "copilot",name: "Copilot Studio",  system: "power", status: "future",   desc: "AI chatbots, conversational actions, GPT plugins" }
+          ]
+        },
+        {
+          name: "Dataverse",
+          components: [
+            { id: "dv",     name: "Dataverse",       system: "power", status: "in-scope", desc: "Common data model, business logic, security, audit" },
+            { id: "dvvirt", name: "Virtual Tables",  system: "power", status: "in-scope", desc: "Real-time view of F&O data in Dataverse without replication" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "integration",
+      name: "Integration Layer",
+      subtitle: "Azure integration services, middleware, API management",
+      bg: "var(--layer-bg-4)",
+      accent: "var(--sys-azure)",
+      groups: [
+        {
+          name: "API Management",
+          components: [
+            { id: "apim",   name: "Azure APIM",     system: "azure", status: "in-scope", desc: "Central API gateway, rate limiting, policies, developer portal" },
+            { id: "appreg", name: "App Registrations",system: "azure", status: "in-scope", desc: "OAuth2 service principals, managed identities, cert auth" }
+          ]
+        },
+        {
+          name: "Messaging & Orchestration",
+          wide: true,
+          components: [
+            { id: "sbus",   name: "Service Bus",    system: "azure", status: "in-scope", desc: "Queues, topics, dead-letter, sessions, at-least-once delivery" },
+            { id: "logapp", name: "Logic Apps",      system: "azure", status: "in-scope", desc: "Workflow orchestration, B2B connectors, AS2/EDIFACT" },
+            { id: "func",   name: "Azure Functions", system: "azure", status: "in-scope", desc: "Serverless compute, event triggers, custom transformations" },
+            { id: "adf",    name: "Data Factory",    system: "azure", status: "in-scope", desc: "ETL/ELT pipelines, data flows, copy activities, scheduling" },
+            { id: "evgrid", name: "Event Grid",      system: "azure", status: "in-scope", desc: "Event routing, push delivery, system topic subscriptions" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "analytics",
+      name: "Data & Analytics",
+      subtitle: "Lakehouse, real-time analytics, business intelligence",
+      bg: "var(--layer-bg-5)",
+      accent: "var(--sys-fabric)",
+      groups: [
+        {
+          name: "Microsoft Fabric",
+          wide: true,
+          components: [
+            { id: "lakehouse",name: "Lakehouse",     system: "fabric", status: "in-scope", desc: "Delta Lake storage, SQL analytics endpoint, OneLake" },
+            { id: "dataflow",name: "Dataflows Gen2", system: "fabric", status: "in-scope", desc: "Low-code data prep, Power Query, scheduled refresh" },
+            { id: "notebook",name: "Notebooks",      system: "fabric", status: "in-scope", desc: "Spark notebooks, Python/Scala, ML workloads" },
+            { id: "pipeline",name: "Data Pipelines", system: "fabric", status: "in-scope", desc: "Orchestration, copy, dataflow activities, monitoring" },
+            { id: "semmodel",name: "Semantic Model", system: "fabric", status: "in-scope", desc: "DirectLake, import/composite mode, DAX measures" }
+          ]
+        },
+        {
+          name: "Power BI",
+          components: [
+            { id: "pbirep", name: "Reports",        system: "fabric", status: "in-scope", desc: "Interactive dashboards, paginated reports, subscriptions" },
+            { id: "pbigw",  name: "Gateway",        system: "fabric", status: "in-scope", desc: "On-prem data gateway, DirectQuery, scheduled refresh" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "infra",
+      name: "Infrastructure & Security",
+      subtitle: "Identity, governance, monitoring, DevOps",
+      bg: "var(--layer-bg-6)",
+      accent: "var(--sys-infra)",
+      groups: [
+        {
+          name: "Identity & Access",
+          components: [
+            { id: "entra",  name: "Entra ID",       system: "infra", status: "in-scope", desc: "SSO, MFA, conditional access, PIM, guest access" },
+            { id: "b2c",    name: "Azure AD B2C",   system: "infra", status: "future",   desc: "External identity for portals, social login, custom policies" }
+          ]
+        },
+        {
+          name: "Security & Compliance",
+          components: [
+            { id: "kv",     name: "Key Vault",      system: "infra", status: "in-scope", desc: "Secrets, certificates, keys, RBAC, soft delete" },
+            { id: "defender",name: "Defender",        system: "infra", status: "in-scope", desc: "Threat protection, CSPM, security posture, alerts" },
+            { id: "purview",name: "Purview",         system: "infra", status: "future",   desc: "Data governance, catalog, sensitivity labels, lineage" }
+          ]
+        },
+        {
+          name: "Operations",
+          wide: true,
+          components: [
+            { id: "monitor",name: "Azure Monitor",  system: "infra", status: "in-scope", desc: "Log Analytics, Application Insights, alerts, dashboards" },
+            { id: "devops", name: "Azure DevOps",    system: "infra", status: "in-scope", desc: "Repos, pipelines, boards, test plans, artifacts" },
+            { id: "backup", name: "Backup & DR",     system: "infra", status: "in-scope", desc: "Azure Backup, geo-redundancy, RTO/RPO policies" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  sidebars: {
+    left: {
+      title: "Pingala Accelerators",
+      items: [
+        { id: "pin-integ", name: "IntegrationsPIN",  desc: "Config-driven integration engine, 7 channels, 9-state machine, auto-retry" },
+        { id: "pin-dme",   name: "Data Movement Engine", desc: "Zero-code ETL, 140x throughput, row-level traceability" },
+        { id: "pin-sec",   name: "SecurityPIN",      desc: "Automated SoD analysis, role mining, security governance" },
+        { id: "pin-ai",    name: "AI Methodology",   desc: "AI-assisted SDD drafting, test generation, analysis acceleration" },
+        { id: "pin-test",  name: "Test Automation",   desc: "RSAT integration, regression suites, data-driven scenarios" },
+        { id: "pin-alm",   name: "ALM Pipeline",      desc: "CI/CD for X++, automated build, deploy, smoke test" }
+      ]
+    },
+    right: {
+      title: "External Systems",
+      items: [
+        { id: "ext-bank",  name: "Banking (ISO 20022)", desc: "Payment files, bank statements, reconciliation" },
+        { id: "ext-edi",   name: "EDI Partners",     desc: "EDIFACT/X12, orders, invoices, ASNs" },
+        { id: "ext-tax",   name: "Tax Authority",    desc: "VAT reporting, SAF-T, Intrastat, e-invoicing" },
+        { id: "ext-einv",  name: "E-invoicing",      desc: "Peppol, country-specific formats, archival" },
+        { id: "ext-doc",   name: "Document Archive",  desc: "SharePoint, ECM, document management" },
+        { id: "ext-crm",   name: "CRM / D365 CE",    desc: "Customer 360, opportunity mgmt, case handling" },
+        { id: "ext-legacy",name: "Legacy ERP",        desc: "Data migration source, historical reference" }
+      ]
+    }
+  },
+
+  connections: [
+    { from: "dmf",       to: "pin-dme",    label: "Migration data",     type: "data" },
+    { from: "odata",     to: "apim",       label: "REST APIs",          type: "integration" },
+    { from: "dualwr",    to: "dv",         label: "Near real-time sync",type: "integration" },
+    { from: "apim",      to: "ext-bank",   label: "Payment files",      type: "external" },
+    { from: "apim",      to: "ext-edi",    label: "EDI messages",       type: "external" },
+    { from: "logapp",    to: "ext-tax",    label: "Tax filings",        type: "external" },
+    { from: "sbus",      to: "func",       label: "Event processing",   type: "integration" },
+    { from: "adf",       to: "lakehouse",  label: "Data ingestion",     type: "data" },
+    { from: "lakehouse", to: "semmodel",   label: "DirectLake",         type: "data" },
+    { from: "semmodel",  to: "pbirep",     label: "Reports",            type: "data" },
+    { from: "gl",        to: "adf",        label: "Financial data",     type: "data" },
+    { from: "sales",     to: "adf",        label: "Sales data",         type: "data" },
+    { from: "wms",       to: "adf",        label: "Warehouse data",     type: "data" },
+    { from: "pin-integ", to: "apim",       label: "Managed integrations",type: "integration" },
+    { from: "pin-sec",   to: "security",   label: "SoD analysis",       type: "integration" },
+    { from: "entra",     to: "apim",       label: "OAuth tokens",       type: "integration" },
+    { from: "kv",        to: "func",       label: "Secrets",            type: "integration" },
+    { from: "monitor",   to: "logapp",     label: "Diagnostics",        type: "integration" }
+  ]
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   BPC DATA — Inline from _bpc-subset.json
+   ═══════════════════════════════════════════════════════════════ */
+CONFIG.bpc = [{"id":"75","name":"Source to pay","areas":[{"id":"75.1","name":"Develop procurement and sourcing strategy","scope":"out-scope","processes":[{"id":"75.10.005","name":"Develop procurement catalogs","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.10.008","name":"Develop supplier segments","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.10.01","name":"Develop procurement policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.10.015","name":"Define accounts payable policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.10.06","name":"Develop spend strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.10.07","name":"Analyze sourcing market","scope":"out-scope","products":["Finance","Supply Chain Management"]}]},{"id":"75.3","name":"Manage supplier relationships","scope":"out-scope","processes":[{"id":"75.30.01","name":"Discover suppliers","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.30.02","name":"Onboard new suppliers","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.30.03","name":"Manage active suppliers","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.30.04","name":"Evaluate supplier performance","scope":"out-scope","products":["Business Central","Customer Service","Field Service","Finance","Supply Chain Management"]},{"id":"75.30.05","name":"Track supplier certifications and compliance","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.30.06","name":"Manage supplier risk","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.30.07","name":"Manage supplier contracts","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Supply Chain Management"]},{"id":"75.30.08","name":"Manage supplier pricing","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"75.35","name":"Source and contract goods and services","scope":"out-scope","processes":[{"id":"75.35.01","name":"Issue requests for information","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.35.02","name":"Issue requests for quotation","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.35.03","name":"Issue requests for proposals","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.35.04","name":"Evaluate supplier bids","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Supply Chain Management"]},{"id":"75.35.05","name":"Manage procurement spend","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.35.06","name":"Contract suppliers for goods","scope":"out-scope","products":["Other"]},{"id":"75.35.07","name":"Contract suppliers for services","scope":"out-scope","products":["Other"]}]},{"id":"75.4","name":"Procure goods and services","scope":"out-scope","processes":[{"id":"75.40.01","name":"Raise purchase requisitions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.40.03","name":"Issue purchase orders","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.40.05","name":"Manage open purchases","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.40.06","name":"Issue blanket purchase orders","scope":"out-scope","products":["Business Central","Supply Chain Management"]},{"id":"75.40.07","name":"Return goods to suppliers","scope":"out-scope","products":["Business Central","Field Service","Supply Chain Management"]},{"id":"75.40.08","name":"Consolidate requisitions","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.40.1","name":"Analyze supply purchase plan","scope":"out-scope","products":["Business Central","Supply Chain Management"]}]},{"id":"75.5","name":"Manage accounts payable","scope":"out-scope","processes":[{"id":"75.50.02","name":"Process supplier invoices","scope":"out-scope","products":["Business Central","Finance"]},{"id":"75.50.07","name":"Dispute invoices","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.50.08","name":"Receive supplier credits","scope":"out-scope","products":["Business Central","Supply Chain Management"]},{"id":"75.50.09","name":"Issue and settle supplier payments","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"75.50.1","name":"Manage promissory notes","scope":"out-scope","products":["Business Central","Finance"]},{"id":"75.50.11","name":"Cancel supplier payments","scope":"out-scope","products":["Business Central","Finance"]},{"id":"75.50.12","name":"Correct supplier payments","scope":"out-scope","products":["Business Central","Finance"]},{"id":"75.50.13","name":"Process supplier rebates and incentives","scope":"out-scope","products":["Business Central","Supply Chain Management"]}]},{"id":"75.8","name":"Analyze procurement and sourcing","scope":"out-scope","processes":[{"id":"75.80.01","name":"Measure and analyze procurement spend","scope":"out-scope","products":["Business Central","Supply Chain Management"]},{"id":"75.80.02","name":"Manage supplier performance","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"75.80.03","name":"Analyze rebates and incentives","scope":"out-scope","products":["Supply Chain Management"]},{"id":"75.80.04","name":"Analyze sourcing effectiveness","scope":"out-scope","products":["Business Central","Supply Chain Management"]},{"id":"75.80.05","name":"Analyze account payable","scope":"out-scope","products":["Business Central","Finance"]},{"id":"75.80.06","name":"Manage procurement risks","scope":"out-scope","products":["Supply Chain Management"]}]}]},{"id":"65","name":"Order to cash","areas":[{"id":"65.05","name":"Develop sales policies","scope":"out-scope","processes":[{"id":"65.05.01","name":"Develop order management policies","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.05.02","name":"Manage sales channels","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"65.05.03","name":"Define customer classifications","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.05.04","name":"Develop sales catalogs","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.05.05","name":"Develop sales pricing strategy","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.05.06","name":"Define trade allowances","scope":"out-scope","products":["Supply Chain Management"]},{"id":"65.05.07","name":"Define order risk management strategy","scope":"out-scope","products":["Commerce","Other","Supply Chain Management"]},{"id":"65.05.09","name":"Define accounts receivable strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.05.1","name":"Define credit and collections strategy","scope":"out-scope","products":["Finance"]}]},{"id":"65.2","name":"Manage sales orders","scope":"out-scope","processes":[{"id":"65.20.015","name":"Sell product subscriptions","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Other","Supply Chain Management"]},{"id":"65.20.025","name":"Enter sales orders","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"65.20.035","name":"Create sales order quotes","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"65.20.045","name":"Manage blanket sales orders","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.20.1","name":"Manage sales order changes","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"65.20.2","name":"Manage sales order holds","scope":"out-scope","products":["Commerce","Supply Chain Management"]},{"id":"65.20.3","name":"Manage store operations","scope":"out-scope","products":["Commerce"]},{"id":"65.20.4","name":"Process customer returns and exchanges","scope":"out-scope","products":["Business Central","Commerce","Customer Service","Field Service","Finance","Other","Supply Chain Management"]},{"id":"65.20.5","name":"Cancel sales orders","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.20.6","name":"Allocate inventory to sales orders","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"65.3","name":"Manage accounts receivable","scope":"out-scope","processes":[{"id":"65.30.01","name":"Issue sales invoices","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"65.30.03","name":"Issue customer credits","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"65.30.05","name":"Bill subscriptions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.055","name":"Recognize revenue","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"65.30.1","name":"Process customer payments","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.11","name":"Process customer prepayments","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.12","name":"Process customer refunds","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.13","name":"Settle customer transactions","scope":"out-scope","products":["Finance","Supply Chain Management"]},{"id":"65.30.2","name":"Write off bad debt","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.3","name":"Process customer rebates","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.4","name":"Manage trade allowances","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.5","name":"Calculate sales commissions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.30.6","name":"Manage bills of exchange","scope":"out-scope","products":["Finance"]}]},{"id":"65.5","name":"Manage credit and collections","scope":"out-scope","processes":[{"id":"65.50.01","name":"Assess customer credit risk","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"65.50.05","name":"Manage customer holds","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.50.06","name":"Monitor customer credit","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.50.07","name":"Collect interest","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.50.08","name":"Manage customer collections","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"65.6","name":"Analyze sales performance","scope":"out-scope","processes":[{"id":"65.60.1","name":"Measure sales performance","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"65.60.2","name":"Analyze accounts receivable","scope":"out-scope","products":["Finance"]},{"id":"65.60.3","name":"Analyze cash flow","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.60.4","name":"Analyze customer risk","scope":"out-scope","products":["Finance","Other"]},{"id":"65.60.5","name":"Analyze revenue","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"65.60.6","name":"Analyze order management processes","scope":"out-scope","products":["Business Central","Field Service","Finance","Sales","Supply Chain Management"]}]}]},{"id":"90","name":"Record to report","areas":[{"id":"90.1","name":"Define accounting policies","scope":"out-scope","processes":[{"id":"90.10.01","name":"Develop company structure","scope":"out-scope","products":["Business Central","Field Service","Finance","Sales","Supply Chain Management"]},{"id":"90.10.02","name":"Develop financial period strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.10.035","name":"Define posting policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.10.04","name":"Develop chart of accounts strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.10.045","name":"Develop budgeting strategy","scope":"out-scope","products":["Finance"]},{"id":"90.10.05","name":"Develop currency policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.10.06","name":"Define banking policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.10.075","name":"Define costing policies","scope":"out-scope","products":["Finance"]},{"id":"90.10.1","name":"Develop asset policies","scope":"out-scope","products":["Finance"]},{"id":"90.10.2","name":"Develop tax strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"90.25","name":"Manage cash","scope":"out-scope","processes":[{"id":"90.25.1","name":"Establish banking relationships","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.25.2","name":"Reconcile bank accounts","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.25.3","name":"Forecast cash flow","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.25.4","name":"Track cash position","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.25.5","name":"Predict customer payments","scope":"out-scope","products":["Finance"]},{"id":"90.25.6","name":"Manage funds","scope":"out-scope","products":["Finance"]}]},{"id":"90.3","name":"Manage budgets","scope":"out-scope","processes":[{"id":"90.30.02","name":"Plan budgets","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.30.025","name":"Define preliminary budgets","scope":"out-scope","products":["Finance"]},{"id":"90.30.03","name":"Reserve budgets","scope":"out-scope","products":["Finance"]},{"id":"90.30.04","name":"Allocate budgets","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.30.05","name":"Maintain budgets","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.30.06","name":"Approve budgets","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.30.07","name":"Transfer budgets","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.30.08","name":"Appropriate budgets","scope":"out-scope","products":["Finance"]}]},{"id":"90.5","name":"Record financial transactions","scope":"out-scope","processes":[{"id":"90.50.04","name":"Record ledger entries","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.043","name":"Record intercompany transactions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.045","name":"Record cost accounting transactions","scope":"out-scope","products":["Finance"]},{"id":"90.50.048","name":"Revalue inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.05","name":"Correct ledger vouchers","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.06","name":"Manage accruals","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.07","name":"Manage deferrals","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.08","name":"Process allocations","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.09","name":"Record tax commitments","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.50.1","name":"Pay taxes","scope":"out-scope","products":["Finance"]}]},{"id":"90.6","name":"Close financial periods","scope":"out-scope","processes":[{"id":"90.60.02","name":"Finalize and post transactions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.04","name":"Reconcile ledger and subledger","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.06","name":"Revalue currency","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.07","name":"Perform ledger settlements","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.08","name":"Consolidate and eliminate financials","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.09","name":"Prepare financial statements","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.095","name":"Prepare statutory financial reports","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.60.1","name":"Close periods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"90.7","name":"Analyze financial performance","scope":"out-scope","processes":[{"id":"90.70.005","name":"Audit financial transactions","scope":"out-scope","products":["Finance"]},{"id":"90.70.065","name":"Analyze costs","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.70.07","name":"Monitor budget to actuals","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.70.11","name":"Analyze financial statements","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.70.12","name":"Audit financial results","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"90.70.2","name":"Monitor financial ratios and metrics","scope":"out-scope","products":["Finance"]},{"id":"90.70.3","name":"Monitor regulatory compliance","scope":"out-scope","products":["Finance"]}]}]},{"id":"60","name":"Inventory to deliver","areas":[{"id":"60.1","name":"Manage warehouse operations","scope":"out-scope","processes":[{"id":"60.10.01","name":"Define warehouse processes","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"60.10.02","name":"Design warehouse layout","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.10.03","name":"Document warehouse policies","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.10.04","name":"Manage work assignments","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"60.2","name":"Maintain inventory levels","scope":"out-scope","processes":[{"id":"60.20.01","name":"Track supplier managed and consignment inventory","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.20.015","name":"Track customer managed inventory and consigned inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.20.02","name":"Process inventory movements","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.20.03","name":"Stage inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.20.04","name":"Count inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.20.06","name":"Adjust inventory levels","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"60.3","name":"Process inbound goods","scope":"out-scope","processes":[{"id":"60.30.01","name":"Receive goods","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Supply Chain Management"]},{"id":"60.30.02","name":"Label received goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.30.03","name":"Put away received goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.30.04","name":"Cross dock received goods to outbound orders","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.30.06","name":"Quarantine received goods","scope":"out-scope","products":["Supply Chain Management"]}]},{"id":"60.4","name":"Process outbound goods","scope":"out-scope","processes":[{"id":"60.40.015","name":"Allocate goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.02","name":"Release goods for picking","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.03","name":"Pick goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.04","name":"Pack goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.06","name":"Load goods for shipping","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.07","name":"Cross dock produced goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.40.08","name":"Return goods to vendor","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"60.5","name":"Manage inventory quality","scope":"out-scope","processes":[{"id":"60.50.01","name":"Define quality procedures and tools","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.02","name":"Build a quality plan for a product","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.03","name":"Maintain quality certifications","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.04","name":"Inspect inventory","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.05","name":"Report quality non-conformance","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.50.06","name":"Handle quarantine goods","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.07","name":"Perform corrective and preventative actions","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.50.09","name":"Scrap defective inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"60.6","name":"Manage freight and transportation","scope":"out-scope","processes":[{"id":"60.60.01","name":"Plan loads","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.60.02","name":"Rate loads","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.60.03","name":"Route loads","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.60.04","name":"Schedule dock appointments","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.60.05","name":"Print shipping documentation","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.60.06","name":"Process freight invoices","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"60.60.07","name":"Reconcile freight","scope":"out-scope","products":["Supply Chain Management"]}]},{"id":"60.8","name":"Analyze warehouse operations","scope":"out-scope","processes":[{"id":"60.80.1","name":"Define warehouse management KPIs","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.80.2","name":"Measure warehouse performance","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.80.3","name":"Analyze inventory levels","scope":"out-scope","products":["Supply Chain Management"]},{"id":"60.80.4","name":"Report on inventory quality","scope":"out-scope","products":["Supply Chain Management"]}]}]},{"id":"70","name":"Plan to produce","areas":[{"id":"70.1","name":"Develop production strategies","scope":"out-scope","processes":[{"id":"70.10.01","name":"Develop production processes","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.10.03","name":"Map value streams","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.10.04","name":"Identify production resources","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.10.05","name":"Develop subcontracting strategy","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.10.06","name":"Correct production processes","scope":"out-scope","products":["Supply Chain Management"]}]},{"id":"70.2","name":"Plan production operations","scope":"out-scope","processes":[{"id":"70.20.01","name":"Modify production plan","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.20.02","name":"Create production plan","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.20.03","name":"Schedule production jobs","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.20.04","name":"Release production to the shop floor","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.20.05","name":"Estimate the cost of production","scope":"out-scope","products":["Supply Chain Management"]}]},{"id":"70.3","name":"Run production operations","scope":"out-scope","processes":[{"id":"70.30.01","name":"Start production","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.30.02","name":"Adjust production plan","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.30.03","name":"Consume materials","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.30.04","name":"Consume resources","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.30.05","name":"Report production output","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.30.06","name":"Subcontract production","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.30.07","name":"Record production costs","scope":"out-scope","products":["Supply Chain Management"]}]},{"id":"70.6","name":"Control production quality","scope":"out-scope","processes":[{"id":"70.60.01","name":"Quarantine manufactured goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.02","name":"Inspect manufactured goods","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.03","name":"Record cost of quality","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.04","name":"Report quality test results","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.06","name":"Rework defective inventory","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.065","name":"Scrap defective production","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.60.07","name":"Report production quality non-conformance","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]},{"id":"70.60.08","name":"Implement corrective and preventative actions","scope":"out-scope","products":["Business Central","Field Service","Finance","Supply Chain Management"]}]},{"id":"70.7","name":"Analyze production operations","scope":"out-scope","processes":[{"id":"70.70.01","name":"Analyze production costs","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.70.02","name":"Analyze production quality results","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.70.03","name":"Trace manufactured goods","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.70.04","name":"Identify continuous improvement opportunities","scope":"out-scope","products":["Supply Chain Management"]},{"id":"70.70.05","name":"Report on production sustainability metrics","scope":"out-scope","products":["Microsoft Cloud for Sustainability"]}]}]},{"id":"80","name":"Project to profit","areas":[{"id":"80.1","name":"Develop project strategy","scope":"out-scope","processes":[{"id":"80.10.01","name":"Develop program charter","scope":"out-scope","products":["Other"]},{"id":"80.10.2","name":"Develop project management strategy","scope":"out-scope","products":["Project Operations"]},{"id":"80.10.3","name":"Develop project governance strategy","scope":"out-scope","products":["Project Operations"]},{"id":"80.10.4","name":"Develop project approval processes","scope":"out-scope","products":["Business Central","Customer Service","Field Service","Finance","Power Automate","Supply Chain Management"]}]},{"id":"80.2","name":"Manage project contracts","scope":"out-scope","processes":[{"id":"80.20.01","name":"Estimate project contracts","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]},{"id":"80.20.04","name":"Negotiate project contracts","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]},{"id":"80.20.05","name":"Finalize project contracts","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]},{"id":"80.20.06","name":"Maintain project contracts","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.20.1","name":"Process project change requests","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]},{"id":"80.20.2","name":"Define project stakeholders","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Microsoft 365","Project Operations","Supply Chain Management"]}]},{"id":"80.3","name":"Plan projects","scope":"out-scope","processes":[{"id":"80.30.02","name":"Define project scope","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Other","Project Operations","Supply Chain Management"]},{"id":"80.30.03","name":"Plan projects resources","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Project Operations","Supply Chain Management"]},{"id":"80.30.04","name":"Plan project tasks","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Project Operations","Supply Chain Management"]},{"id":"80.30.05","name":"Assign project resources","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Project Operations","Supply Chain Management"]},{"id":"80.30.06","name":"Forecast project resources","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.30.07","name":"Manage project budget","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]}]},{"id":"80.4","name":"Manage project delivery","scope":"out-scope","processes":[{"id":"80.40.005","name":"Govern projects","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Other","Project Operations","Supply Chain Management"]},{"id":"80.40.008","name":"Control project scope","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Project Operations","Supply Chain Management"]},{"id":"80.40.02","name":"Track project expenses","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.40.05","name":"Track project time","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.40.055","name":"Track project fees","scope":"out-scope","products":["Project Operations"]},{"id":"80.40.11","name":"Purchase project materials","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.40.115","name":"Use and track project materials","scope":"out-scope","products":["Project Operations"]},{"id":"80.40.12","name":"Produce project materials","scope":"out-scope","products":["Project Operations"]},{"id":"80.40.14","name":"Subcontract project components","scope":"out-scope","products":["Project Operations","Supply Chain Management"]},{"id":"80.40.2","name":"Manage project communications","scope":"out-scope","products":["Project Operations"]},{"id":"80.40.3","name":"Manage project knowledge and documentation","scope":"out-scope","products":["Business Central","Field Service","Finance","Other","Project Operations","Supply Chain Management"]}]},{"id":"80.5","name":"Manage project financials","scope":"out-scope","processes":[{"id":"80.50.03","name":"Correct project transactions","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.50.04","name":"Convert projects to fixed assets","scope":"out-scope","products":["Finance"]},{"id":"80.50.05","name":"Invoice project milestones","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.50.055","name":"Invoice project transactions","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.50.06","name":"Recognize project revenue","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]}]},{"id":"80.6","name":"Analyze project performance","scope":"out-scope","processes":[{"id":"80.60.02","name":"Monitor project status","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.60.03","name":"Analyze project metrics","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]},{"id":"80.60.1","name":"Monitor project risks","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Other","Project Operations","SharePoint","Supply Chain Management"]},{"id":"80.60.2","name":"Manage project quality","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Other","Project Operations","SharePoint","Supply Chain Management"]},{"id":"80.60.3","name":"Measure project progress","scope":"out-scope","products":["Business Central","Field Service","Finance","Microsoft 365","Other","Project Operations","Supply Chain Management"]}]}]},{"id":"55","name":"Hire to retire","areas":[{"id":"55.05","name":"Develop people strategy","scope":"out-scope","processes":[{"id":"55.05.01","name":"Define organizational structure","scope":"out-scope","products":["Human Resources"]},{"id":"55.05.02","name":"Define operating hours and schedule","scope":"out-scope","products":["Business Central","Commerce","Field Service","Finance","Human Resources","Project Operations","Supply Chain Management","Teams"]},{"id":"55.05.03","name":"Define human resources policies","scope":"out-scope","products":["Finance","Human Resources"]},{"id":"55.05.04","name":"Develop code of conduct","scope":"out-scope","products":["Microsoft 365","Other"]},{"id":"55.05.05","name":"Define expense policies","scope":"out-scope","products":["Finance","Project Operations"]},{"id":"55.05.06","name":"Plan workforce","scope":"out-scope","products":["Human Resources"]},{"id":"55.05.07","name":"Develop communication strategy","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]}]},{"id":"55.1","name":"Recruit and onboard talent","scope":"out-scope","processes":[{"id":"55.10.04","name":"Budget workforce","scope":"out-scope","products":["Finance","Human Resources"]},{"id":"55.10.045","name":"List open positions","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Microsoft 365","Other","Supply Chain Management"]},{"id":"55.10.05","name":"Recruit new talent","scope":"out-scope","products":["Human Resources"]},{"id":"55.10.06","name":"Hire for open positions","scope":"out-scope","products":["Human Resources"]},{"id":"55.10.07","name":"Onboard new employees","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.10.08","name":"Onboard new contractors","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Microsoft 365","Supply Chain Management"]}]},{"id":"55.3","name":"Manage workplace compliance","scope":"out-scope","processes":[{"id":"55.30.01","name":"Identify workplace hazards","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.30.02","name":"Document safety protocols","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.30.03","name":"Audit workplace for safety","scope":"out-scope","products":["Human Resources"]},{"id":"55.30.1","name":"Report an injury or illness","scope":"out-scope","products":["Business Central","Customer Service","Field Service","Finance","Human Resources","Supply Chain Management"]},{"id":"55.30.2","name":"Verify employment","scope":"out-scope","products":["Human Resources"]},{"id":"55.30.3","name":"Update worker information","scope":"out-scope","products":["Human Resources"]},{"id":"55.30.4","name":"Manage cases and requests","scope":"out-scope","products":["Business Central","Customer Service","Field Service","Finance","Human Resources","Other","Supply Chain Management"]}]},{"id":"55.4","name":"Manage performance and growth","scope":"out-scope","processes":[{"id":"55.40.005","name":"Promote employees","scope":"out-scope","products":["Human Resources"]},{"id":"55.40.03","name":"Define employee career paths","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.40.055","name":"Track skills and competencies","scope":"out-scope","products":["Human Resources","Project Operations","Supply Chain Management"]},{"id":"55.40.07","name":"Set employee growth goals","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Sales","Supply Chain Management"]},{"id":"55.40.075","name":"Perform a skill gap analysis","scope":"out-scope","products":["Human Resources"]},{"id":"55.40.08","name":"Asses worker performance","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.40.09","name":"Define learning paths","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.40.11","name":"Train employees","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.40.2","name":"Transfer workers","scope":"out-scope","products":["Human Resources"]},{"id":"55.40.3","name":"Recognize employees","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Power Apps","Supply Chain Management"]}]},{"id":"55.5","name":"Manage time and attendance","scope":"out-scope","processes":[{"id":"55.50.01","name":"Develop leave and absence policies","scope":"out-scope","products":["Human Resources"]},{"id":"55.50.02","name":"Record employee absences","scope":"out-scope","products":["Human Resources","Project Operations","Supply Chain Management"]},{"id":"55.50.03","name":"Manage shifts","scope":"out-scope","products":["Teams"]},{"id":"55.50.04","name":"Request time off","scope":"out-scope","products":["Human Resources","Project Operations"]},{"id":"55.50.05","name":"Record employee time","scope":"out-scope","products":["Project Operations","Supply Chain Management"]},{"id":"55.50.1","name":"Request travel","scope":"out-scope","products":["Finance"]},{"id":"55.50.2","name":"Manage employee travel","scope":"out-scope","products":["Business Central","Field Service","Finance","Project Operations","Supply Chain Management"]}]},{"id":"55.7","name":"Manage compensation and benefits","scope":"out-scope","processes":[{"id":"55.70.01","name":"Define compensation policies","scope":"out-scope","products":["Human Resources"]},{"id":"55.70.02","name":"Define benefit offerings","scope":"out-scope","products":["Human Resources"]},{"id":"55.70.04","name":"Manage benefits enrollment","scope":"out-scope","products":["Human Resources"]},{"id":"55.70.045","name":"Reimburse workers for expenses","scope":"out-scope","products":["Finance","Human Resources"]},{"id":"55.70.05","name":"Pay employees","scope":"out-scope","products":["Finance","Human Resources"]},{"id":"55.70.06","name":"Record life events","scope":"out-scope","products":["Human Resources"]},{"id":"55.70.07","name":"Manage compensation changes","scope":"out-scope","products":["Human Resources"]}]},{"id":"55.8","name":"Offboard talent","scope":"out-scope","processes":[{"id":"55.80.01","name":"Conduct succession planning","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.80.02","name":"Conduct exit interviews","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.80.03","name":"Plan worker retirement","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.80.04","name":"Terminate workers","scope":"out-scope","products":["Human Resources"]},{"id":"55.80.05","name":"Furlough workers","scope":"out-scope","products":["Human Resources"]}]},{"id":"55.9","name":"Analyze HR programs","scope":"out-scope","processes":[{"id":"55.90.01","name":"Track employee learning","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.90.02","name":"Monitor employee satisfaction","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.90.03","name":"Analyze worker performance","scope":"out-scope","products":["Business Central","Field Service","Finance","Human Resources","Other","Supply Chain Management"]},{"id":"55.90.04","name":"Analyze safety achievement","scope":"out-scope","products":["Human Resources"]},{"id":"55.90.05","name":"Monitor human capital expenses","scope":"out-scope","products":["Human Resources"]},{"id":"55.90.06","name":"Analyze and reconcile compensation and benefits","scope":"out-scope","products":["Human Resources"]}]}]}];
+
+/* ═══════════════════════════════════════════════════════════════
+   Products to System mapping
+   ═══════════════════════════════════════════════════════════════ */
+CONFIG.productSystemMap = {
+  "Finance": "d365fo",
+  "Supply Chain Management": "d365fo",
+  "Business Central": "d365fo",
+  "Field Service": "d365ce",
+  "Customer Service": "d365ce",
+  "Sales": "d365ce",
+  "Commerce": "d365fo",
+  "Human Resources": "d365fo",
+  "Project Operations": "d365fo",
+  "Power Apps": "power",
+  "Power Automate": "power",
+  "Power Pages": "power",
+  "Power BI": "fabric",
+  "Microsoft 365": "infra",
+  "Teams": "infra",
+  "SharePoint": "infra",
+  "Microsoft Cloud for Sustainability": "azure",
+  "Other": null
+};
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RENDER ENGINE — Do not modify per-project
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── State ──
+  const state = {
+    activeFilters: new Set(Object.keys(CONFIG.systems)),
+    activeComponent: null,
+    activeFlows: new Set(),
+    activeStatuses: new Set(['in-scope', 'future', 'out-scope', 'isv']),
+    searchTerm: '',
+    bpcScope: {},       // { processId: 'in-scope' | 'future' | 'out-scope' }
+    bpcSearchTerm: '',
+    activeTab: 'tab-sa',
+    scopedDirty: true   // flag to re-render Tab 3 only when needed
+  };
+
+  // Initialize BPC scope from data
+  CONFIG.bpc.forEach(l1 => {
+    l1.areas.forEach(l2 => {
+      l2.processes.forEach(l3 => {
+        state.bpcScope[l3.id] = l3.scope || 'out-scope';
+      });
+    });
+  });
+
+  // ── Refs ──
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => [...document.querySelectorAll(sel)];
+  const tooltip = $('#tooltip');
+  const detailPanel = $('#detailPanel');
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB SWITCHING
+  // ═══════════════════════════════════════════════════════════════
+  $$('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tabId = this.dataset.tab;
+      if (tabId === state.activeTab) return;
+      state.activeTab = tabId;
+      // Update buttons
+      $$('.tab-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      // Update panes
+      $$('.tab-pane').forEach(p => p.classList.remove('active'));
+      $('#' + tabId).classList.add('active');
+      // Render Tab 3 on demand
+      if (tabId === 'tab-scoped' && state.scopedDirty) {
+        renderScopedBlueprint();
+        state.scopedDirty = false;
+      }
+      // Update tab badges
+      updateTabBadges();
+    });
+  });
+
+  function updateTabBadges() {
+    const counts = { 'in-scope': 0, 'future': 0, 'out-scope': 0 };
+    Object.values(state.bpcScope).forEach(s => counts[s] = (counts[s] || 0) + 1);
+    const total = counts['in-scope'] + counts['future'];
+    const bpcBtn = document.querySelector('[data-tab="tab-bpc"]');
+    const scopedBtn = document.querySelector('[data-tab="tab-scoped"]');
+    let badge = bpcBtn.querySelector('.tab-badge');
+    if (!badge) { badge = document.createElement('span'); badge.className = 'tab-badge'; bpcBtn.appendChild(badge); }
+    badge.textContent = total > 0 ? total : '';
+    badge.style.display = total > 0 ? '' : 'none';
+    let badge2 = scopedBtn.querySelector('.tab-badge');
+    if (!badge2) { badge2 = document.createElement('span'); badge2.className = 'tab-badge'; scopedBtn.appendChild(badge2); }
+    badge2.textContent = total > 0 ? total : '';
+    badge2.style.display = total > 0 ? '' : 'none';
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 1: SOLUTION ARCHITECTURE (existing engine)
+  // ═══════════════════════════════════════════════════════════════
+
+  // ── Get all components as flat list (supports BPC children) ──
+  function getAllComponents() {
+    const comps = [];
+    CONFIG.layers.forEach(layer => {
+      layer.groups.forEach(group => {
+        if (group.components) {
+          group.components.forEach(c => {
+            comps.push({ ...c, layerName: layer.name, groupName: group.name });
+          });
+        }
+        if (group.children) {
+          group.children.forEach(sub => {
+            sub.components.forEach(c => {
+              comps.push({ ...c, layerName: layer.name, groupName: `${group.name} \u203A ${sub.name}` });
+            });
+          });
+        }
+      });
+    });
+    CONFIG.sidebars.left.items.forEach(c => comps.push({ ...c, system: 'pingala', layerName: 'Accelerators', groupName: 'Pingala' }));
+    CONFIG.sidebars.right.items.forEach(c => comps.push({ ...c, system: 'external', layerName: 'External', groupName: 'External Systems' }));
+    return comps;
+  }
+
+  // ── Render Header ──
+  function renderHeader() {
+    $('#bpTitle').textContent = CONFIG.meta.title;
+    $('#bpSubtitle').textContent = CONFIG.meta.subtitle;
+    $('#bpBadge').textContent = CONFIG.meta.badge;
+    $('#bpMeta').textContent = `${CONFIG.meta.viewpoint}  \u2022  v${CONFIG.meta.version}  \u2022  ${CONFIG.meta.date}`;
+  }
+
+  // ── Render Summary ──
+  function renderSummary() {
+    const allComps = getAllComponents();
+    const layers = CONFIG.layers.length;
+    const conns = CONFIG.connections.length;
+    const statusCounts = {};
+    allComps.forEach(c => {
+      const s = c.status || 'in-scope';
+      statusCounts[s] = (statusCounts[s] || 0) + 1;
+    });
+    $('#bpSummary').innerHTML =
+      `<strong>${layers}</strong> layers &middot; <strong>${allComps.length}</strong> components &middot; <strong>${conns}</strong> connections`;
+
+    const statuses = [
+      { key: 'in-scope', label: 'In scope', color: '#10b981' },
+      { key: 'future', label: 'Future', color: '#3b82f6' },
+      { key: 'out-scope', label: 'Out of scope', color: '#94a3b8' },
+      { key: 'isv', label: 'ISV', color: '#8b5cf6' }
+    ];
+    const container = $('#statusLegend');
+    container.innerHTML = '';
+    statuses.filter(s => statusCounts[s.key]).forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'status-toggle active';
+      btn.dataset.statusKey = s.key;
+      btn.style.setProperty('--status-color', s.color);
+      btn.innerHTML = `<span class="status-swatch" style="background:${s.color}"></span>${s.label} <span style="opacity:0.45;font-size:9px">(${statusCounts[s.key]})</span>`;
+      btn.addEventListener('click', () => {
+        if (state.activeStatuses.has(s.key)) {
+          state.activeStatuses.delete(s.key);
+          btn.classList.remove('active');
+          btn.classList.add('dimmed');
+        } else {
+          state.activeStatuses.add(s.key);
+          btn.classList.add('active');
+          btn.classList.remove('dimmed');
+        }
+        applyFilters();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  // ── Render Filters ──
+  function renderFilters() {
+    const container = $('#filters');
+    const allComps = getAllComponents();
+    Object.entries(CONFIG.systems).forEach(([key, sys]) => {
+      const count = allComps.filter(c => c.system === key).length;
+      if (count === 0) return;
+      const pill = document.createElement('button');
+      pill.className = 'filter-pill active';
+      pill.dataset.system = key;
+      pill.style.setProperty('--pill-color', sys.color);
+      pill.innerHTML = `<span class="swatch" style="background:${sys.color}"></span>${sys.name} <span style="opacity:0.45;font-size:9px">(${count})</span>`;
+      pill.addEventListener('click', () => toggleFilter(key, pill));
+      container.appendChild(pill);
+    });
+  }
+
+  // ── Render Sidebar ──
+  function renderSidebar(side, containerId) {
+    const container = $(containerId);
+    const data = CONFIG.sidebars[side];
+    container.innerHTML = `<div class="sidebar-title">${data.title}</div>`;
+    data.items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'sidebar-item';
+      el.dataset.compId = item.id;
+      el.dataset.system = side === 'left' ? 'pingala' : 'external';
+      el.innerHTML = `
+        <div class="sidebar-item-name">${item.name}</div>
+        <div class="sidebar-item-desc">${item.desc}</div>
+      `;
+      el.addEventListener('click', () => openDetail(item, side === 'left' ? 'Pingala Accelerators' : 'External Systems', side === 'left' ? 'pingala' : 'external'));
+      el.addEventListener('mouseenter', (e) => showTooltip(e, item, side === 'left' ? 'pingala' : 'external'));
+      el.addEventListener('mouseleave', hideTooltip);
+      container.appendChild(el);
+    });
+  }
+
+  // ── Render Layers ──
+  function renderLayers() {
+    const stack = $('#layersStack');
+    stack.innerHTML = '';
+    CONFIG.layers.forEach((layer, i) => {
+      const layerEl = document.createElement('div');
+      layerEl.className = 'layer';
+      layerEl.style.background = layer.bg;
+
+      const compCount = layer.groups.reduce((sum, g) => {
+        let c = g.components ? g.components.length : 0;
+        if (g.children) c += g.children.reduce((s, sub) => s + sub.components.length, 0);
+        return sum + c;
+      }, 0);
+
+      layerEl.innerHTML = `
+        <div class="layer-accent" style="background:${layer.accent}"></div>
+        <div class="layer-header">
+          <span class="layer-chevron">\u25BE</span>
+          <span class="layer-name">${layer.name}</span>
+          <span class="layer-subtitle">${layer.subtitle || ''}</span>
+          <span class="layer-count">${compCount} components</span>
+        </div>
+        <div class="layer-collapse">
+          <div class="layer-body"></div>
+        </div>
+      `;
+
+      const body = layerEl.querySelector('.layer-body');
+      layer.groups.forEach(group => {
+        const hasChildren = group.children && group.children.length > 0;
+        const groupEl = document.createElement('div');
+        groupEl.className = 'group' + (group.wide ? ' wide' : '') + (group.full ? ' full' : '') + (hasChildren && group.collapsed ? ' g-collapsed' : '');
+
+        if (hasChildren) {
+          const totalComps = group.children.reduce((s, c) => s + c.components.length, 0);
+          const bpcLabel = group.bpcId ? ` <span class="bpc-id">(${group.bpcId})</span>` : '';
+          groupEl.innerHTML = `
+            <div class="group-header">
+              <span class="group-chevron">\u25BE</span>
+              <span class="group-label" style="margin-bottom:0;padding-bottom:0;border-bottom:none">${group.name}${bpcLabel}</span>
+              <span class="group-summary">${group.children.length} areas \u00B7 ${totalComps}</span>
+            </div>
+            <div class="group-collapse">
+              <div class="group-children"></div>
+            </div>
+          `;
+          const childrenContainer = groupEl.querySelector('.group-children');
+          group.children.forEach(sub => {
+            const subEl = document.createElement('div');
+            subEl.className = 'subgroup';
+            subEl.innerHTML = `<div class="subgroup-label">${sub.name}</div><div class="group-components"></div>`;
+            const subComps = subEl.querySelector('.group-components');
+            sub.components.forEach(comp => {
+              subComps.appendChild(createComponent(comp, layer.name, `${group.name} \u203A ${sub.name}`));
+            });
+            childrenContainer.appendChild(subEl);
+          });
+          groupEl.querySelector('.group-header').addEventListener('click', () => {
+            groupEl.classList.toggle('g-collapsed');
+            if (state.activeFlows.size > 0) setTimeout(drawConnections, 350);
+          });
+        } else {
+          groupEl.innerHTML = `
+            <div class="group-label">${group.name}</div>
+            <div class="group-components"></div>
+          `;
+          const compsContainer = groupEl.querySelector('.group-components');
+          if (group.components) {
+            group.components.forEach(comp => {
+              compsContainer.appendChild(createComponent(comp, layer.name, group.name));
+            });
+          }
+        }
+
+        body.appendChild(groupEl);
+      });
+
+      stack.appendChild(layerEl);
+    });
+  }
+
+  // ── Create Component Element ──
+  function createComponent(comp, layerName, groupName) {
+    const sys = CONFIG.systems[comp.system] || CONFIG.systems.custom;
+    const el = document.createElement('div');
+    el.className = 'comp';
+    el.dataset.compId = comp.id;
+    el.dataset.system = comp.system;
+    el.dataset.status = comp.status || 'in-scope';
+    el.style.background = sys.color;
+    el.textContent = comp.name;
+
+    if (comp.status && comp.status !== 'in-scope') {
+      const dot = document.createElement('span');
+      dot.className = `status-dot ${comp.status}`;
+      el.appendChild(dot);
+    }
+
+    el.addEventListener('mouseenter', (e) => showTooltip(e, comp, comp.system));
+    el.addEventListener('mouseleave', hideTooltip);
+    el.addEventListener('click', () => openDetail(comp, `${layerName} \u203A ${groupName}`, comp.system));
+
+    return el;
+  }
+
+  // ── Tooltip ──
+  function showTooltip(e, comp, systemKey) {
+    const sys = CONFIG.systems[systemKey] || { name: systemKey };
+    const connections = CONFIG.connections.filter(c => c.from === comp.id || c.to === comp.id);
+
+    let html = `
+      <div class="tooltip-name">${comp.name}</div>
+      <div class="tooltip-system">${sys.name}</div>
+    `;
+    if (comp.desc) {
+      html += `<div class="tooltip-desc">${comp.desc}</div>`;
+    }
+    if (connections.length > 0) {
+      html += `<div class="tooltip-connections">${connections.length} connection${connections.length > 1 ? 's' : ''} \u2014 click for details</div>`;
+    }
+
+    tooltip.innerHTML = html;
+    tooltip.classList.add('visible');
+    positionTooltip(e);
+  }
+
+  function positionTooltip(e) {
+    const pad = 12;
+    const rect = tooltip.getBoundingClientRect();
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    if (x + rect.width > window.innerWidth - pad) x = e.clientX - rect.width - pad;
+    if (y + rect.height > window.innerHeight - pad) y = e.clientY - rect.height - pad;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('visible');
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (tooltip.classList.contains('visible')) positionTooltip(e);
+  });
+
+  // ── Detail Panel ──
+  function openDetail(comp, path, systemKey) {
+    const sys = CONFIG.systems[systemKey] || { name: systemKey, color: '#666' };
+    const connections = CONFIG.connections.filter(c => c.from === comp.id || c.to === comp.id);
+    const allComps = getAllComponents();
+
+    $$('.comp.active, .sidebar-item.active').forEach(el => el.classList.remove('active'));
+    const el = document.querySelector(`[data-comp-id="${comp.id}"]`);
+    if (el) el.classList.add('active');
+
+    state.activeComponent = comp.id;
+
+    let connHtml = '';
+    if (connections.length > 0) {
+      connHtml = `
+        <div class="detail-section">
+          <div class="detail-section-title">Connections</div>
+          <ul class="detail-conn-list">
+            ${connections.map(c => {
+              const otherId = c.from === comp.id ? c.to : c.from;
+              const other = allComps.find(x => x.id === otherId);
+              const direction = c.from === comp.id ? '\u2192' : '\u2190';
+              return `
+                <li class="detail-conn-item">
+                  <span class="detail-conn-arrow">${direction}</span>
+                  <span class="detail-conn-name">${other ? other.name : otherId}</span>
+                  <span class="detail-conn-label">${c.label}</span>
+                </li>
+              `;
+            }).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    const statusColors = { 'in-scope': '#10b981', 'future': '#3b82f6', 'out-scope': '#94a3b8', 'isv': '#8b5cf6' };
+    const statusLabels = { 'in-scope': 'In Scope', 'future': 'Future', 'out-scope': 'Out of Scope', 'isv': 'ISV' };
+    const currentStatus = comp.status || 'in-scope';
+
+    $('#detailContent').innerHTML = `
+      <div class="detail-header">
+        <div class="detail-system-badge" style="background:${sys.color}">${sys.name}</div>
+        <div class="detail-name">${comp.name}</div>
+        <div class="detail-group-path">${path}</div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <div class="detail-section-title">Description</div>
+          <div class="detail-desc">${comp.desc || 'No description provided.'}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">Scope Status</div>
+          <button class="status-cycler" id="statusCycler" data-comp-id="${comp.id}" data-status="${currentStatus}">
+            <span class="status-dot-lg" style="background:${statusColors[currentStatus]}"></span>
+            <span id="statusCyclerLabel">${statusLabels[currentStatus]}</span>
+          </button>
+          <div class="status-cycler-hint">Click to cycle: In Scope \u2192 Future \u2192 Out of Scope \u2192 ISV</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section-title">System</div>
+          <div class="detail-tags">
+            <span class="detail-tag">${sys.name}</span>
+            ${(comp.products || []).map(p => `<span class="detail-tag" style="background:#e8ecf0;color:#4a6078">${p}</span>`).join('')}
+          </div>
+        </div>
+        ${comp.implementedBy && comp.implementedBy.length > 0 ? `
+        <div class="detail-section">
+          <div class="detail-section-title">Implemented By</div>
+          <ul class="detail-conn-list" id="implementedByList">
+            ${comp.implementedBy.map(refId => {
+              const ref = allComps.find(x => x.id === refId);
+              return ref ? `
+                <li class="detail-conn-item detail-impl-link" data-target-id="${refId}" style="cursor:pointer">
+                  <span class="detail-conn-arrow">\u2192</span>
+                  <span class="detail-conn-name">${ref.name}</span>
+                  <span class="detail-conn-label">${ref.groupName}</span>
+                </li>
+              ` : '';
+            }).join('')}
+          </ul>
+        </div>
+        ` : ''}
+        ${connHtml}
+      </div>
+    `;
+
+    $$('#implementedByList .detail-impl-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const targetId = link.dataset.targetId;
+        const targetEl = document.querySelector(`[data-comp-id="${targetId}"]`);
+        if (!targetEl) return;
+        const layer = targetEl.closest('.layer');
+        if (layer && layer.classList.contains('collapsed')) layer.classList.remove('collapsed');
+        const group = targetEl.closest('.group');
+        if (group && group.classList.contains('g-collapsed')) group.classList.remove('g-collapsed');
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        $$('.comp.highlight').forEach(el => el.classList.remove('highlight'));
+        targetEl.classList.add('highlight');
+        setTimeout(() => targetEl.classList.remove('highlight'), 2000);
+      });
+    });
+
+    $('#statusCycler').addEventListener('click', function() {
+      const cycle = ['in-scope', 'future', 'out-scope', 'isv'];
+      const cur = this.dataset.status;
+      const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+      this.dataset.status = next;
+      this.querySelector('.status-dot-lg').style.background = statusColors[next];
+      this.querySelector('#statusCyclerLabel').textContent = statusLabels[next];
+
+      comp.status = next;
+      const compEl = document.querySelector(`[data-comp-id="${comp.id}"]`);
+      if (compEl) {
+        compEl.dataset.status = next;
+        let dot = compEl.querySelector('.status-dot');
+        if (next === 'in-scope') {
+          if (dot) dot.remove();
+        } else {
+          if (!dot) { dot = document.createElement('span'); compEl.appendChild(dot); }
+          dot.className = `status-dot ${next}`;
+        }
+      }
+      renderSummary();
+    });
+
+    detailPanel.classList.add('open');
+  }
+
+  function closeDetail() {
+    detailPanel.classList.remove('open');
+    $$('.comp.active, .sidebar-item.active').forEach(el => el.classList.remove('active'));
+    state.activeComponent = null;
+  }
+
+  $('#detailClose').addEventListener('click', closeDetail);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.comp') && !e.target.closest('.sidebar-item') && !e.target.closest('.detail-panel')) {
+      closeDetail();
+    }
+  });
+
+  // ── Export Scope as JSON (Tab 1) ──
+  $('#exportScope').addEventListener('click', () => {
+    exportScopeJSON();
+  });
+
+  function exportScopeJSON() {
+    const scope = {
+      meta: { ...CONFIG.meta, exportedAt: new Date().toISOString() },
+      platform: Object.keys(CONFIG.systems).filter(k => k.startsWith('d365')).join(', ') || 'mixed',
+      bpcScope: state.bpcScope,
+      processes: [],
+      components: []
+    };
+
+    CONFIG.layers.forEach(layer => {
+      layer.groups.forEach(group => {
+        const bpcId = group.bpcId || null;
+        const processEntry = bpcId ? { bpcId, name: group.name, status: 'in-scope', areas: [] } : null;
+
+        const addComp = (comp, areaName) => {
+          const entry = { id: comp.id, name: comp.name, system: comp.system, status: comp.status || 'in-scope', layer: layer.name, group: group.name };
+          if (areaName) entry.area = areaName;
+          if (bpcId) entry.bpcId = bpcId;
+          if (comp.desc) entry.desc = comp.desc;
+          if (comp.implementedBy) entry.implementedBy = comp.implementedBy;
+          if (comp.products) entry.products = comp.products;
+          scope.components.push(entry);
+        };
+
+        if (group.children) {
+          group.children.forEach(sub => {
+            const areaEntry = { name: sub.name, components: [] };
+            sub.components.forEach(c => {
+              addComp(c, sub.name);
+              areaEntry.components.push({ id: c.id, name: c.name, status: c.status || 'in-scope' });
+            });
+            if (processEntry) processEntry.areas.push(areaEntry);
+          });
+        }
+        if (group.components) {
+          group.components.forEach(c => addComp(c, null));
+        }
+        if (processEntry) scope.processes.push(processEntry);
+      });
+    });
+
+    CONFIG.sidebars.left.items.forEach(item => {
+      scope.components.push({ id: item.id, name: item.name, system: 'pingala', status: 'in-scope', layer: 'Accelerators', desc: item.desc });
+    });
+    CONFIG.sidebars.right.items.forEach(item => {
+      scope.components.push({ id: item.id, name: item.name, system: 'external', status: 'in-scope', layer: 'External Systems', desc: item.desc });
+    });
+
+    const blob = new Blob([JSON.stringify(scope, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${CONFIG.meta.title.replace(/\s+/g, '-').toLowerCase()}-scope.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Filtering ──
+  function toggleFilter(systemKey, pill) {
+    if (state.activeFilters.has(systemKey)) {
+      state.activeFilters.delete(systemKey);
+      pill.classList.remove('active');
+      pill.classList.add('dimmed');
+    } else {
+      state.activeFilters.add(systemKey);
+      pill.classList.add('active');
+      pill.classList.remove('dimmed');
+    }
+    applyFilters();
+  }
+
+  function applyFilters() {
+    $$('#tab-sa .comp').forEach(el => {
+      const system = el.dataset.system;
+      const status = el.dataset.status || 'in-scope';
+      const matchesSystem = state.activeFilters.has(system);
+      const matchesStatus = state.activeStatuses.has(status);
+      const matchesSearch = !state.searchTerm ||
+        el.textContent.toLowerCase().includes(state.searchTerm);
+      el.classList.toggle('dimmed', !matchesSystem || !matchesStatus || !matchesSearch);
+    });
+    $$('#tab-sa .sidebar-item').forEach(el => {
+      const system = el.dataset.system;
+      if (!system) return;
+      const matchesSystem = state.activeFilters.has(system);
+      const matchesSearch = !state.searchTerm ||
+        el.textContent.toLowerCase().includes(state.searchTerm);
+      el.style.opacity = (!matchesSystem || !matchesSearch) ? '0.15' : '1';
+    });
+    if (state.activeFlows.size > 0) drawConnections();
+  }
+
+  // ── Search ──
+  $('#search').addEventListener('input', (e) => {
+    state.searchTerm = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  // ── Flow Type Filtering ──
+  $$('.flow-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const type = this.dataset.type;
+      if (state.activeFlows.has(type)) {
+        state.activeFlows.delete(type);
+        this.classList.remove('active');
+      } else {
+        state.activeFlows.add(type);
+        this.classList.add('active');
+      }
+      const overlay = $('#connectionsOverlay');
+      if (state.activeFlows.size > 0) {
+        overlay.classList.add('visible');
+        drawConnections();
+      } else {
+        overlay.classList.remove('visible');
+      }
+    });
+  });
+
+  // ── Smart Connection Drawing ──
+  function isElementVisible(el) {
+    if (el.classList.contains('dimmed')) return false;
+    if (el.style.opacity && parseFloat(el.style.opacity) < 0.5) return false;
+    const layer = el.closest('.layer');
+    if (layer && layer.classList.contains('collapsed')) return false;
+    return true;
+  }
+
+  function drawConnections() {
+    const overlay = $('#connectionsOverlay');
+    const bpRect = $('#blueprint').getBoundingClientRect();
+    overlay.setAttribute('viewBox', `0 0 ${bpRect.width} ${bpRect.height}`);
+
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    ['data', 'integration', 'external'].forEach(type => {
+      const colors = { data: '#e63946', integration: '#f77f00', external: '#d62ad0' };
+      const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      marker.setAttribute('id', `arrow-${type}`);
+      marker.setAttribute('viewBox', '0 0 10 7');
+      marker.setAttribute('refX', '9');
+      marker.setAttribute('refY', '3.5');
+      marker.setAttribute('markerWidth', '7');
+      marker.setAttribute('markerHeight', '5');
+      marker.setAttribute('orient', 'auto');
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('points', '0 0, 10 3.5, 0 7');
+      poly.setAttribute('fill', colors[type]);
+      poly.setAttribute('fill-opacity', '1');
+      marker.appendChild(poly);
+      defs.appendChild(marker);
+    });
+    overlay.innerHTML = '';
+    overlay.appendChild(defs);
+
+    CONFIG.connections.forEach(conn => {
+      if (!state.activeFlows.has(conn.type)) return;
+
+      const fromEl = document.querySelector(`#tab-sa [data-comp-id="${conn.from}"]`);
+      const toEl = document.querySelector(`#tab-sa [data-comp-id="${conn.to}"]`);
+      if (!fromEl || !toEl) return;
+      if (!isElementVisible(fromEl) || !isElementVisible(toEl)) return;
+
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = toEl.getBoundingClientRect();
+
+      const from = {
+        cx: fromRect.left + fromRect.width / 2 - bpRect.left,
+        cy: fromRect.top + fromRect.height / 2 - bpRect.top,
+        t: fromRect.top - bpRect.top,
+        b: fromRect.bottom - bpRect.top,
+        l: fromRect.left - bpRect.left,
+        r: fromRect.right - bpRect.left
+      };
+      const to = {
+        cx: toRect.left + toRect.width / 2 - bpRect.left,
+        cy: toRect.top + toRect.height / 2 - bpRect.top,
+        t: toRect.top - bpRect.top,
+        b: toRect.bottom - bpRect.top,
+        l: toRect.left - bpRect.left,
+        r: toRect.right - bpRect.left
+      };
+
+      const dx = to.cx - from.cx;
+      const dy = to.cy - from.cy;
+      let x1, y1, x2, y2, d;
+
+      if (Math.abs(dy) > Math.abs(dx) * 0.5) {
+        if (dy > 0) {
+          x1 = from.cx; y1 = from.b; x2 = to.cx; y2 = to.t;
+        } else {
+          x1 = from.cx; y1 = from.t; x2 = to.cx; y2 = to.b;
+        }
+        const my = (y1 + y2) / 2;
+        d = `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
+      } else {
+        if (dx > 0) {
+          x1 = from.r; y1 = from.cy; x2 = to.l; y2 = to.cy;
+        } else {
+          x1 = from.l; y1 = from.cy; x2 = to.r; y2 = to.cy;
+        }
+        const mx = (x1 + x2) / 2;
+        d = `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+      }
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', `conn-line ${conn.type}`);
+      path.setAttribute('marker-end', `url(#arrow-${conn.type})`);
+      overlay.appendChild(path);
+
+      if (conn.label) {
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', mx);
+        text.setAttribute('y', my - 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'conn-label');
+        text.textContent = conn.label;
+        overlay.appendChild(text);
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    if (state.activeFlows.size > 0) drawConnections();
+  });
+
+  // ── Layer Collapse / Expand ──
+  $('#layersStack').addEventListener('click', function(e) {
+    const header = e.target.closest('.layer-header');
+    if (!header) return;
+    header.parentElement.classList.toggle('collapsed');
+    if (state.activeFlows.size > 0) setTimeout(drawConnections, 400);
+  });
+
+  $('#collapseAll').addEventListener('click', () => {
+    $$('#tab-sa .layer').forEach(el => el.classList.add('collapsed'));
+    if (state.activeFlows.size > 0) setTimeout(drawConnections, 400);
+  });
+
+  $('#expandAll').addEventListener('click', () => {
+    $$('#tab-sa .layer').forEach(el => el.classList.remove('collapsed'));
+    if (state.activeFlows.size > 0) setTimeout(drawConnections, 400);
+  });
+
+  // ── Reset All ──
+  $('#resetAll').addEventListener('click', () => {
+    state.activeFilters = new Set(Object.keys(CONFIG.systems));
+    $$('.filter-pill').forEach(p => { p.classList.add('active'); p.classList.remove('dimmed'); });
+    state.activeStatuses = new Set(['in-scope', 'future', 'out-scope', 'isv']);
+    $$('.status-toggle').forEach(b => { b.classList.add('active'); b.classList.remove('dimmed'); });
+    state.activeFlows = new Set();
+    $$('.flow-btn').forEach(b => b.classList.remove('active'));
+    $('#connectionsOverlay').classList.remove('visible');
+    state.searchTerm = '';
+    $('#search').value = '';
+    $('#scopeOnly').classList.remove('active');
+    $$('#tab-sa .layer').forEach(el => el.classList.remove('collapsed'));
+    applyFilters();
+  });
+
+  // ── Scope Only Toggle ──
+  $('#scopeOnly').addEventListener('click', function() {
+    const isActive = this.classList.toggle('active');
+    if (isActive) {
+      state.activeStatuses = new Set(['in-scope']);
+      $$('.status-toggle').forEach(b => {
+        if (b.dataset.statusKey === 'in-scope') {
+          b.classList.add('active'); b.classList.remove('dimmed');
+        } else {
+          b.classList.remove('active'); b.classList.add('dimmed');
+        }
+      });
+    } else {
+      state.activeStatuses = new Set(['in-scope', 'future', 'out-scope', 'isv']);
+      $$('.status-toggle').forEach(b => { b.classList.add('active'); b.classList.remove('dimmed'); });
+    }
+    applyFilters();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 2: BPC PROCESS SCOPE
+  // ═══════════════════════════════════════════════════════════════
+
+  function renderBpcTree() {
+    const container = $('#bpcTreeContainer');
+    container.innerHTML = '';
+
+    CONFIG.bpc.forEach(l1 => {
+      const card = document.createElement('div');
+      card.className = 'bpc-l1-card';
+      card.dataset.l1Id = l1.id;
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'bpc-l1-header';
+      header.innerHTML = `
+        <span class="bpc-l1-id">${l1.id}</span>
+        <span class="bpc-l1-name">${l1.name.toUpperCase()}</span>
+        <div class="bpc-l1-actions">
+          <button data-action="all-in" title="Set all processes to In Scope">All In</button>
+          <button data-action="all-future" title="Set all processes to Future">All Future</button>
+          <button data-action="all-out" title="Set all processes to Out of Scope">All Out</button>
+        </div>
+      `;
+
+      // L1 bulk action handlers
+      header.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = btn.dataset.action;
+          const scope = action === 'all-in' ? 'in-scope' : action === 'all-future' ? 'future' : 'out-scope';
+          l1.areas.forEach(l2 => {
+            l2.processes.forEach(l3 => {
+              state.bpcScope[l3.id] = scope;
+            });
+          });
+          // Update dots in this card
+          card.querySelectorAll('.bpc-scope-dot').forEach(dot => {
+            dot.dataset.scope = scope;
+          });
+          updateBpcSummary();
+          state.scopedDirty = true;
+        });
+      });
+
+      card.appendChild(header);
+
+      // Body with L2 rows
+      const body = document.createElement('div');
+      body.className = 'bpc-l1-body';
+
+      l1.areas.forEach(l2 => {
+        const l2Row = document.createElement('div');
+        l2Row.className = 'bpc-l2-row';
+        l2Row.dataset.l2Id = l2.id;
+
+        const l2Header = document.createElement('div');
+        l2Header.className = 'bpc-l2-header';
+        l2Header.innerHTML = `
+          <span class="bpc-l2-chevron">\u25BE</span>
+          <span class="bpc-l2-name">${l2.name}</span>
+          <span class="bpc-l2-count">${l2.processes.length}</span>
+        `;
+
+        l2Header.addEventListener('click', () => {
+          l2Row.classList.toggle('l2-collapsed');
+        });
+
+        l2Row.appendChild(l2Header);
+
+        // L3 items
+        const l2Collapse = document.createElement('div');
+        l2Collapse.className = 'bpc-l2-collapse';
+        const l3List = document.createElement('div');
+        l3List.className = 'bpc-l3-list';
+
+        l2.processes.forEach(l3 => {
+          const l3Item = document.createElement('div');
+          l3Item.className = 'bpc-l3-item';
+          l3Item.dataset.l3Id = l3.id;
+          l3Item.dataset.searchText = `${l3.id} ${l3.name} ${(l3.products || []).join(' ')}`.toLowerCase();
+
+          const currentScope = state.bpcScope[l3.id] || 'out-scope';
+
+          l3Item.innerHTML = `
+            <span class="bpc-scope-dot" data-scope="${currentScope}" data-id="${l3.id}" title="Click to cycle scope"></span>
+            <span class="bpc-l3-name">${l3.name}</span>
+            <span class="bpc-l3-products">${(l3.products || []).join(', ')}</span>
+          `;
+
+          // Scope dot cycling
+          const dot = l3Item.querySelector('.bpc-scope-dot');
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cycle = ['out-scope', 'in-scope', 'future'];
+            const cur = dot.dataset.scope;
+            const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+            dot.dataset.scope = next;
+            state.bpcScope[l3.id] = next;
+            updateBpcSummary();
+            state.scopedDirty = true;
+          });
+
+          l3List.appendChild(l3Item);
+        });
+
+        l2Collapse.appendChild(l3List);
+        l2Row.appendChild(l2Collapse);
+        body.appendChild(l2Row);
+      });
+
+      card.appendChild(body);
+      container.appendChild(card);
+    });
+  }
+
+  function updateBpcSummary() {
+    const counts = { 'in-scope': 0, 'future': 0, 'out-scope': 0 };
+    Object.values(state.bpcScope).forEach(s => counts[s] = (counts[s] || 0) + 1);
+    const bar = $('#bpcSummaryBar');
+    bar.innerHTML = `
+      <span class="bpc-stat"><span class="bpc-stat-dot" style="background:var(--scope-in)"></span>${counts['in-scope']} in scope</span>
+      <span class="bpc-stat"><span class="bpc-stat-dot" style="background:var(--scope-future)"></span>${counts['future']} future</span>
+      <span class="bpc-stat"><span class="bpc-stat-dot" style="background:var(--scope-out)"></span>${counts['out-scope']} out of scope</span>
+      <span style="margin-left:auto;font-size:11px;color:#8899aa">${Object.keys(state.bpcScope).length} total processes</span>
+    `;
+    updateTabBadges();
+  }
+
+  // BPC Search
+  $('#bpcSearch').addEventListener('input', (e) => {
+    state.bpcSearchTerm = e.target.value.toLowerCase().trim();
+    applyBpcSearch();
+  });
+
+  function applyBpcSearch() {
+    const term = state.bpcSearchTerm;
+    $$('.bpc-l1-card').forEach(card => {
+      let cardHasMatch = false;
+      card.querySelectorAll('.bpc-l2-row').forEach(l2Row => {
+        let l2HasMatch = false;
+        l2Row.querySelectorAll('.bpc-l3-item').forEach(l3Item => {
+          const text = l3Item.dataset.searchText;
+          const matches = !term || text.includes(term);
+          l3Item.classList.toggle('bpc-hidden', !matches);
+          if (matches) l2HasMatch = true;
+        });
+        l2Row.classList.toggle('bpc-hidden', !l2HasMatch);
+        if (l2HasMatch) cardHasMatch = true;
+        // Auto-expand matching L2 rows when searching
+        if (term && l2HasMatch) l2Row.classList.remove('l2-collapsed');
+      });
+      card.classList.toggle('bpc-hidden', !cardHasMatch);
+    });
+  }
+
+  // BPC Expand/Collapse All
+  $('#bpcExpandAll').addEventListener('click', () => {
+    $$('.bpc-l2-row').forEach(r => r.classList.remove('l2-collapsed'));
+  });
+  $('#bpcCollapseAll').addEventListener('click', () => {
+    $$('.bpc-l2-row').forEach(r => r.classList.add('l2-collapsed'));
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TAB 3: SCOPED BLUEPRINT
+  // ═══════════════════════════════════════════════════════════════
+
+  function getScopedSystems() {
+    const systems = new Set();
+    CONFIG.bpc.forEach(l1 => {
+      l1.areas.forEach(l2 => {
+        l2.processes.forEach(l3 => {
+          const scope = state.bpcScope[l3.id];
+          if (scope === 'in-scope' || scope === 'future') {
+            (l3.products || []).forEach(prod => {
+              const sys = CONFIG.productSystemMap[prod];
+              if (sys) systems.add(sys);
+            });
+          }
+        });
+      });
+    });
+    return systems;
+  }
+
+  function getBpcProcessesForSystem(systemKey) {
+    const processes = [];
+    CONFIG.bpc.forEach(l1 => {
+      l1.areas.forEach(l2 => {
+        l2.processes.forEach(l3 => {
+          const scope = state.bpcScope[l3.id];
+          if (scope === 'in-scope' || scope === 'future') {
+            const prods = l3.products || [];
+            const mappedSystems = prods.map(p => CONFIG.productSystemMap[p]).filter(Boolean);
+            if (mappedSystems.includes(systemKey)) {
+              processes.push({ l1Name: l1.name, l1Id: l1.id, l3Name: l3.name, l3Id: l3.id, scope });
+            }
+          }
+        });
+      });
+    });
+    return processes;
+  }
+
+  function renderScopedBlueprint() {
+    const container = $('#scopedBlueprintContainer');
+    container.innerHTML = '';
+
+    const scopedSystems = getScopedSystems();
+
+    if (scopedSystems.size === 0) {
+      container.innerHTML = `<div class="scoped-empty"><strong>No processes scoped yet.</strong><br>Go to the BPC Process Scope tab and mark processes as in-scope or future to see relevant SA components here.</div>`;
+      return;
+    }
+
+    // For each layer, filter groups/components to only those matching scoped systems
+    CONFIG.layers.forEach(layer => {
+      const filteredGroups = [];
+
+      layer.groups.forEach(group => {
+        if (group.children) {
+          // BPC drill-down group: filter children's components
+          const filteredChildren = [];
+          group.children.forEach(sub => {
+            const filteredComps = sub.components.filter(c => scopedSystems.has(c.system));
+            if (filteredComps.length > 0) {
+              filteredChildren.push({ ...sub, components: filteredComps });
+            }
+          });
+          if (filteredChildren.length > 0) {
+            filteredGroups.push({ ...group, children: filteredChildren });
+          }
+        } else if (group.components) {
+          const filteredComps = group.components.filter(c => scopedSystems.has(c.system));
+          if (filteredComps.length > 0) {
+            filteredGroups.push({ ...group, components: filteredComps });
+          }
+        }
+      });
+
+      if (filteredGroups.length === 0) return;
+
+      // Collect BPC processes relevant to this layer's systems
+      const layerSystems = new Set();
+      filteredGroups.forEach(g => {
+        if (g.children) g.children.forEach(sub => sub.components.forEach(c => layerSystems.add(c.system)));
+        if (g.components) g.components.forEach(c => layerSystems.add(c.system));
+      });
+
+      const bpcProcesses = [];
+      layerSystems.forEach(sys => {
+        getBpcProcessesForSystem(sys).forEach(p => {
+          if (!bpcProcesses.find(x => x.l1Id === p.l1Id)) {
+            bpcProcesses.push(p);
+          }
+        });
+      });
+
+      // Render BPC process header bar above layer
+      if (bpcProcesses.length > 0) {
+        const l1Names = [...new Set(bpcProcesses.map(p => `${p.l1Id} ${p.l1Name}`))];
+        const headerBar = document.createElement('div');
+        headerBar.className = 'bpc-process-header';
+        headerBar.innerHTML = l1Names.map(n => {
+          const parts = n.split(' ');
+          const id = parts[0];
+          const name = parts.slice(1).join(' ');
+          return `<span><span class="bpc-ph-id">${id}</span> ${name}</span>`;
+        }).join('<span style="opacity:0.3;margin:0 6px">\u2022</span>');
+        container.appendChild(headerBar);
+      }
+
+      // Render the layer
+      const layerEl = document.createElement('div');
+      layerEl.className = 'blueprint';
+      layerEl.style.marginBottom = '16px';
+
+      const compCount = filteredGroups.reduce((sum, g) => {
+        let c = g.components ? g.components.length : 0;
+        if (g.children) c += g.children.reduce((s, sub) => s + sub.components.length, 0);
+        return sum + c;
+      }, 0);
+
+      const layerInner = document.createElement('div');
+      layerInner.className = 'layer';
+      layerInner.style.background = layer.bg;
+      layerInner.innerHTML = `
+        <div class="layer-accent" style="background:${layer.accent}"></div>
+        <div class="layer-header">
+          <span class="layer-chevron">\u25BE</span>
+          <span class="layer-name">${layer.name}</span>
+          <span class="layer-subtitle">${layer.subtitle || ''}</span>
+          <span class="layer-count">${compCount} components</span>
+        </div>
+        <div class="layer-collapse">
+          <div class="layer-body"></div>
+        </div>
+      `;
+
+      layerInner.querySelector('.layer-header').addEventListener('click', function() {
+        layerInner.classList.toggle('collapsed');
+      });
+
+      const body = layerInner.querySelector('.layer-body');
+      filteredGroups.forEach(group => {
+        const hasChildren = group.children && group.children.length > 0;
+        const groupEl = document.createElement('div');
+        groupEl.className = 'group' + (group.wide ? ' wide' : '') + (group.full ? ' full' : '');
+
+        if (hasChildren) {
+          const totalComps = group.children.reduce((s, c) => s + c.components.length, 0);
+          const bpcLabel = group.bpcId ? ` <span class="bpc-id">(${group.bpcId})</span>` : '';
+          groupEl.innerHTML = `
+            <div class="group-header">
+              <span class="group-chevron">\u25BE</span>
+              <span class="group-label" style="margin-bottom:0;padding-bottom:0;border-bottom:none">${group.name}${bpcLabel}</span>
+              <span class="group-summary">${group.children.length} areas \u00B7 ${totalComps}</span>
+            </div>
+            <div class="group-collapse">
+              <div class="group-children"></div>
+            </div>
+          `;
+          const childrenContainer = groupEl.querySelector('.group-children');
+          group.children.forEach(sub => {
+            const subEl = document.createElement('div');
+            subEl.className = 'subgroup';
+            subEl.innerHTML = `<div class="subgroup-label">${sub.name}</div><div class="group-components"></div>`;
+            const subComps = subEl.querySelector('.group-components');
+            sub.components.forEach(comp => {
+              subComps.appendChild(createComponent(comp, layer.name, `${group.name} \u203A ${sub.name}`));
+            });
+            childrenContainer.appendChild(subEl);
+          });
+          groupEl.querySelector('.group-header').addEventListener('click', () => {
+            groupEl.classList.toggle('g-collapsed');
+          });
+        } else {
+          groupEl.innerHTML = `
+            <div class="group-label">${group.name}</div>
+            <div class="group-components"></div>
+          `;
+          const compsContainer = groupEl.querySelector('.group-components');
+          if (group.components) {
+            group.components.forEach(comp => {
+              compsContainer.appendChild(createComponent(comp, layer.name, group.name));
+            });
+          }
+        }
+
+        body.appendChild(groupEl);
+      });
+
+      layerEl.appendChild(layerInner);
+      container.appendChild(layerEl);
+    });
+  }
+
+  // Scoped Expand/Collapse
+  $('#scopedExpandAll').addEventListener('click', () => {
+    $$('#tab-scoped .layer').forEach(el => el.classList.remove('collapsed'));
+    $$('#tab-scoped .group').forEach(el => el.classList.remove('g-collapsed'));
+  });
+  $('#scopedCollapseAll').addEventListener('click', () => {
+    $$('#tab-scoped .layer').forEach(el => el.classList.add('collapsed'));
+  });
+
+  // Scoped Export
+  $('#scopedExport').addEventListener('click', () => {
+    exportScopeJSON();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // INITIALIZE
+  // ═══════════════════════════════════════════════════════════════
+  function init() {
+    renderHeader();
+    renderFilters();
+    renderSummary();
+    renderSidebar('left', '#sidebarLeft');
+    renderSidebar('right', '#sidebarRight');
+    renderLayers();
+    renderBpcTree();
+    updateBpcSummary();
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>

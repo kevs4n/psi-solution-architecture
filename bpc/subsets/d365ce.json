@@ -1,0 +1,4421 @@
+[
+    {
+        "id": "20",
+        "name": "Case to resolution",
+        "areas": [
+            {
+                "id": "20.1",
+                "name": "Establish a knowledge base",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "20.10.01",
+                        "name": "Create knowledge base articles",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.10.02",
+                        "name": "Identify common issues",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.10.03",
+                        "name": "Maintain knowledge base articles",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.10.04",
+                        "name": "Retire knowledge base articles",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "20.2",
+                "name": "Define customer and employee service operations",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "20.20.01",
+                        "name": "Define agent skill sets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.20.02",
+                        "name": "Define queues and teams",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.20.03",
+                        "name": "Define routing rules",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.20.04",
+                        "name": "Determine business process flow",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.20.05",
+                        "name": "Define KPIs for call center performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.20.06",
+                        "name": "Define operating hours",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.20.07",
+                        "name": "Define case types and policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "20.3",
+                "name": "Intake cases",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "20.30.01",
+                        "name": "Assign a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.30.02",
+                        "name": "Capture details about a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.30.03",
+                        "name": "Create a case from a channel",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.30.04",
+                        "name": "Create a case manually",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.30.05",
+                        "name": "Send notification to customer",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "20.4",
+                "name": "Manage and work on cases",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "20.40.01",
+                        "name": "Engage in conversations with customers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.40.015",
+                        "name": "Create and track tasks for a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.02",
+                        "name": "Follow up on a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.40.03",
+                        "name": "Merge cases",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.04",
+                        "name": "Re-assign case to another team/individual",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.05",
+                        "name": "Send knowledge article to customer",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.06",
+                        "name": "Swarm on case with team",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.40.07",
+                        "name": "Track additional information against a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.08",
+                        "name": "Use similar cases to find a solution",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.09",
+                        "name": "Use the knowledge base to find a solution",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.1",
+                        "name": "Close a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.11",
+                        "name": "Convert a case to a knowledge article",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.40.12",
+                        "name": "Send case close notification",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.13",
+                        "name": "Reopen a case",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.2",
+                        "name": "Create and track service level agreements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.40.21",
+                        "name": "Create and schedule services",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.40.22",
+                        "name": "Define service terms",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "20.6",
+                "name": "Analyze case performance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "20.60.01",
+                        "name": "Analyze case patterns",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "20.60.02",
+                        "name": "Analyze knowledge base usage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.60.03",
+                        "name": "Review call center performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    },
+                    {
+                        "id": "20.60.04",
+                        "name": "Review case loads and rebalance case loads",
+                        "scope": "out-scope",
+                        "products": [
+                            "Customer Service"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "85",
+        "name": "Prospect to quote",
+        "areas": [
+            {
+                "id": "85.15",
+                "name": "Manage customer relationships",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.15.1",
+                        "name": "Maintain contacts and accounts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.15.2",
+                        "name": "Manage loyalty programs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Commerce"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "85.25",
+                "name": "Identify and qualify leads",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.25.1",
+                        "name": "Manage lead identification process",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.25.2",
+                        "name": "Qualify and disqualify leads",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "85.35",
+                "name": "Define sales strategy and policies",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.35.1",
+                        "name": "Define sales process",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.35.2",
+                        "name": "Define sales teams",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.35.3",
+                        "name": "Define sales channels",
+                        "scope": "out-scope",
+                        "products": [
+                            "Commerce"
+                        ]
+                    },
+                    {
+                        "id": "85.35.4",
+                        "name": "Determine sales targets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.35.5",
+                        "name": "Establish sales commission and incentive structures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "85.45",
+                "name": "Pursue opportunities",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.45.1",
+                        "name": "Identify opportunity",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.45.2",
+                        "name": "Manage opportunity process",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.45.3",
+                        "name": "Nurture opportunities and finalize the sale",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "85.55",
+                "name": "Estimate and quote sales",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.55.1",
+                        "name": "Define customer order requirements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.2",
+                        "name": "Define sales quotations",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.3",
+                        "name": "Negotiate and finalize quotations",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.4",
+                        "name": "Ensure client approval and sign-off",
+                        "scope": "out-scope",
+                        "products": [
+                            "Sales"
+                        ]
+                    },
+                    {
+                        "id": "85.55.5",
+                        "name": "Confirm purchase details",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.6",
+                        "name": "Conduct post-sale follow-up",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.7",
+                        "name": "Conduct upsell, cross sell or repeat sale prompt",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "85.55.8",
+                        "name": "Nurture trust relationship regularly with customer",
+                        "scope": "out-scope",
+                        "products": [
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "85.65",
+                "name": "Analyze sales",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "85.65.1",
+                        "name": "Provide insights into sales strategies and performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central"
+                        ]
+                    },
+                    {
+                        "id": "85.65.2",
+                        "name": "Analyze sales data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Sales"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "65",
+        "name": "Order to cash",
+        "areas": [
+            {
+                "id": "65.05",
+                "name": "Develop sales policies",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "65.05.01",
+                        "name": "Develop order management policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.02",
+                        "name": "Manage sales channels",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.03",
+                        "name": "Define customer classifications",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.04",
+                        "name": "Develop sales catalogs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.05",
+                        "name": "Develop sales pricing strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.06",
+                        "name": "Define trade allowances",
+                        "scope": "out-scope",
+                        "products": [
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.07",
+                        "name": "Define order risk management strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Commerce",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.09",
+                        "name": "Define accounts receivable strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.05.1",
+                        "name": "Define credit and collections strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "65.2",
+                "name": "Manage sales orders",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "65.20.015",
+                        "name": "Sell product subscriptions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.025",
+                        "name": "Enter sales orders",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.045",
+                        "name": "Manage blanket sales orders",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.1",
+                        "name": "Manage sales order changes",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.2",
+                        "name": "Manage sales order holds",
+                        "scope": "out-scope",
+                        "products": [
+                            "Commerce",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.3",
+                        "name": "Manage store operations",
+                        "scope": "out-scope",
+                        "products": [
+                            "Commerce"
+                        ]
+                    },
+                    {
+                        "id": "65.20.4",
+                        "name": "Process customer returns and exchanges",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.5",
+                        "name": "Cancel sales orders",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.20.6",
+                        "name": "Allocate inventory to sales orders",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "65.3",
+                "name": "Manage accounts receivable",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "65.30.01",
+                        "name": "Issue sales invoices",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.03",
+                        "name": "Issue customer credits",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.05",
+                        "name": "Bill subscriptions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.055",
+                        "name": "Recognize revenue",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.1",
+                        "name": "Process customer payments",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.11",
+                        "name": "Process customer prepayments",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.12",
+                        "name": "Process customer refunds",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.13",
+                        "name": "Settle customer transactions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.2",
+                        "name": "Write off bad debt",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.3",
+                        "name": "Process customer rebates",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.4",
+                        "name": "Manage trade allowances",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.5",
+                        "name": "Calculate sales commissions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.30.6",
+                        "name": "Manage bills of exchange",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "65.5",
+                "name": "Manage credit and collections",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "65.50.01",
+                        "name": "Assess customer credit risk",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.50.05",
+                        "name": "Manage customer holds",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.50.06",
+                        "name": "Monitor customer credit",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.50.07",
+                        "name": "Collect interest",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.50.08",
+                        "name": "Manage customer collections",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "65.6",
+                "name": "Analyze sales performance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "65.60.1",
+                        "name": "Measure sales performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.60.2",
+                        "name": "Analyze accounts receivable",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "65.60.3",
+                        "name": "Analyze cash flow",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.60.4",
+                        "name": "Analyze customer risk",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Other"
+                        ]
+                    },
+                    {
+                        "id": "65.60.5",
+                        "name": "Analyze revenue",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "65.60.6",
+                        "name": "Analyze order management processes",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "95",
+        "name": "Service to deliver",
+        "areas": [
+            {
+                "id": "95.05",
+                "name": "Develop service strategy",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "95.05.1",
+                        "name": "Develop service pricing strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.2",
+                        "name": "Develop service policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.3",
+                        "name": "Develop service catalogs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.4",
+                        "name": "Define service contracts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.5",
+                        "name": "Define service risk management strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Microsoft 365",
+                            "Other"
+                        ]
+                    },
+                    {
+                        "id": "95.05.6",
+                        "name": "Define service scheduling approach",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.65",
+                        "name": "Define service workflows",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.7",
+                        "name": "Develop frontline team",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.75",
+                        "name": "Forecast service demand",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.05.8",
+                        "name": "Develop contractor network",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "95.15",
+                "name": "Plan service work",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "95.15.1",
+                        "name": "Model service capacity",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.15.2",
+                        "name": "Plan service demand",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.15.3",
+                        "name": "Forecast service parts demand",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.15.5",
+                        "name": "Plan service contractor work",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.15.6",
+                        "name": "Manage service assets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "95.25",
+                "name": "Manage service work",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "95.25.1",
+                        "name": "Receive service requests",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.2",
+                        "name": "Maintain open service requests",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.3",
+                        "name": "Allocate service parts inventory",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.4",
+                        "name": "Deploy service resources",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.6",
+                        "name": "Monitor service assets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.65",
+                        "name": "Coordinate service work with customer",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Insights Journey",
+                            "Field Service",
+                            "Finance",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.25.95",
+                        "name": "Schedule frontline workers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Azure",
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "95.35",
+                "name": "Deliver services",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "95.35.025",
+                        "name": "Gather work order details",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.05",
+                        "name": "Track fronline worker location",
+                        "scope": "out-scope",
+                        "products": [
+                            "Field Service"
+                        ]
+                    },
+                    {
+                        "id": "95.35.1",
+                        "name": "Perform service tasks",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.2",
+                        "name": "Collaborate on service work",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.3",
+                        "name": "Manage service truck inventory",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.4",
+                        "name": "Update asset register",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.6",
+                        "name": "Collect customer feedback",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Other",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.8",
+                        "name": "Record service timesheet",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.9",
+                        "name": "Update work order details",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.35.95",
+                        "name": "Finalize work orders",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "95.45",
+                "name": "Analyze service performance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "95.45.1",
+                        "name": "Measure frontline worker service performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Power BI",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.45.2",
+                        "name": "Optimize service performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Power BI",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.45.3",
+                        "name": "Analyze service profitability",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Power BI",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.45.5",
+                        "name": "Identify service trends",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Power BI",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "95.45.6",
+                        "name": "Monitor service quality",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Power BI",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "55",
+        "name": "Hire to retire",
+        "areas": [
+            {
+                "id": "55.05",
+                "name": "Develop people strategy",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.05.01",
+                        "name": "Define organizational structure",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.05.02",
+                        "name": "Define operating hours and schedule",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Commerce",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Project Operations",
+                            "Supply Chain Management",
+                            "Teams"
+                        ]
+                    },
+                    {
+                        "id": "55.05.03",
+                        "name": "Define human resources policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.05.04",
+                        "name": "Develop code of conduct",
+                        "scope": "out-scope",
+                        "products": [
+                            "Microsoft 365",
+                            "Other"
+                        ]
+                    },
+                    {
+                        "id": "55.05.05",
+                        "name": "Define expense policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Project Operations"
+                        ]
+                    },
+                    {
+                        "id": "55.05.06",
+                        "name": "Plan workforce",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.05.07",
+                        "name": "Develop communication strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.1",
+                "name": "Recruit and onboard talent",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.10.04",
+                        "name": "Budget workforce",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.10.045",
+                        "name": "List open positions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Microsoft 365",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.10.05",
+                        "name": "Recruit new talent",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.10.06",
+                        "name": "Hire for open positions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.10.07",
+                        "name": "Onboard new employees",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.10.08",
+                        "name": "Onboard new contractors",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Microsoft 365",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.3",
+                "name": "Manage workplace compliance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.30.01",
+                        "name": "Identify workplace hazards",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.30.02",
+                        "name": "Document safety protocols",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.30.03",
+                        "name": "Audit workplace for safety",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.30.1",
+                        "name": "Report an injury or illness",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.30.2",
+                        "name": "Verify employment",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.30.3",
+                        "name": "Update worker information",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.30.4",
+                        "name": "Manage cases and requests",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Customer Service",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.4",
+                "name": "Manage performance and growth",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.40.005",
+                        "name": "Promote employees",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.40.03",
+                        "name": "Define employee career paths",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.055",
+                        "name": "Track skills and competencies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.07",
+                        "name": "Set employee growth goals",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.075",
+                        "name": "Perform a skill gap analysis",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.40.08",
+                        "name": "Asses worker performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.09",
+                        "name": "Define learning paths",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.11",
+                        "name": "Train employees",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.40.2",
+                        "name": "Transfer workers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.40.3",
+                        "name": "Recognize employees",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Power Apps",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.5",
+                "name": "Manage time and attendance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.50.01",
+                        "name": "Develop leave and absence policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.50.02",
+                        "name": "Record employee absences",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.50.03",
+                        "name": "Manage shifts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Teams"
+                        ]
+                    },
+                    {
+                        "id": "55.50.04",
+                        "name": "Request time off",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources",
+                            "Project Operations"
+                        ]
+                    },
+                    {
+                        "id": "55.50.05",
+                        "name": "Record employee time",
+                        "scope": "out-scope",
+                        "products": [
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.50.1",
+                        "name": "Request travel",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "55.50.2",
+                        "name": "Manage employee travel",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Project Operations",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.7",
+                "name": "Manage compensation and benefits",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.70.01",
+                        "name": "Define compensation policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.02",
+                        "name": "Define benefit offerings",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.04",
+                        "name": "Manage benefits enrollment",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.045",
+                        "name": "Reimburse workers for expenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.05",
+                        "name": "Pay employees",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance",
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.06",
+                        "name": "Record life events",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.70.07",
+                        "name": "Manage compensation changes",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.8",
+                "name": "Offboard talent",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.80.01",
+                        "name": "Conduct succession planning",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.80.02",
+                        "name": "Conduct exit interviews",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.80.03",
+                        "name": "Plan worker retirement",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.80.04",
+                        "name": "Terminate workers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.80.05",
+                        "name": "Furlough workers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "55.9",
+                "name": "Analyze HR programs",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "55.90.01",
+                        "name": "Track employee learning",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.90.02",
+                        "name": "Monitor employee satisfaction",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.90.03",
+                        "name": "Analyze worker performance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Human Resources",
+                            "Other",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "55.90.04",
+                        "name": "Analyze safety achievement",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.90.05",
+                        "name": "Monitor human capital expenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    },
+                    {
+                        "id": "55.90.06",
+                        "name": "Analyze and reconcile compensation and benefits",
+                        "scope": "out-scope",
+                        "products": [
+                            "Human Resources"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "90",
+        "name": "Record to report",
+        "areas": [
+            {
+                "id": "90.1",
+                "name": "Define accounting policies",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.10.01",
+                        "name": "Develop company structure",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Sales",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.02",
+                        "name": "Develop financial period strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.035",
+                        "name": "Define posting policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.04",
+                        "name": "Develop chart of accounts strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.045",
+                        "name": "Develop budgeting strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.10.05",
+                        "name": "Develop currency policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.06",
+                        "name": "Define banking policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.10.075",
+                        "name": "Define costing policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.10.1",
+                        "name": "Develop asset policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.10.2",
+                        "name": "Develop tax strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "90.25",
+                "name": "Manage cash",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.25.1",
+                        "name": "Establish banking relationships",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.25.2",
+                        "name": "Reconcile bank accounts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.25.3",
+                        "name": "Forecast cash flow",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.25.4",
+                        "name": "Track cash position",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.25.5",
+                        "name": "Predict customer payments",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.25.6",
+                        "name": "Manage funds",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "90.3",
+                "name": "Manage budgets",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.30.02",
+                        "name": "Plan budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.30.025",
+                        "name": "Define preliminary budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.30.03",
+                        "name": "Reserve budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.30.04",
+                        "name": "Allocate budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.30.05",
+                        "name": "Maintain budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.30.06",
+                        "name": "Approve budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.30.07",
+                        "name": "Transfer budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.30.08",
+                        "name": "Appropriate budgets",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "90.5",
+                "name": "Record financial transactions",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.50.04",
+                        "name": "Record ledger entries",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.043",
+                        "name": "Record intercompany transactions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.045",
+                        "name": "Record cost accounting transactions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.50.048",
+                        "name": "Revalue inventory",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.05",
+                        "name": "Correct ledger vouchers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.06",
+                        "name": "Manage accruals",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.07",
+                        "name": "Manage deferrals",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.08",
+                        "name": "Process allocations",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.09",
+                        "name": "Record tax commitments",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.50.1",
+                        "name": "Pay taxes",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "90.6",
+                "name": "Close financial periods",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.60.02",
+                        "name": "Finalize and post transactions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.04",
+                        "name": "Reconcile ledger and subledger",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.06",
+                        "name": "Revalue currency",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.07",
+                        "name": "Perform ledger settlements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.08",
+                        "name": "Consolidate and eliminate financials",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.09",
+                        "name": "Prepare financial statements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.095",
+                        "name": "Prepare statutory financial reports",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.60.1",
+                        "name": "Close periods",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "90.7",
+                "name": "Analyze financial performance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "90.70.005",
+                        "name": "Audit financial transactions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.70.065",
+                        "name": "Analyze costs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.70.07",
+                        "name": "Monitor budget to actuals",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.70.11",
+                        "name": "Analyze financial statements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.70.12",
+                        "name": "Audit financial results",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "90.70.2",
+                        "name": "Monitor financial ratios and metrics",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    },
+                    {
+                        "id": "90.70.3",
+                        "name": "Monitor regulatory compliance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Finance"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "99",
+        "name": "Administer to operate",
+        "areas": [
+            {
+                "id": "99.01",
+                "name": "Implement solutions",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.01.1",
+                        "name": "Implement cloud solutions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.11",
+                        "name": "Drive app value",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.12",
+                        "name": "Define implementation strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.2",
+                        "name": "Create solution blueprint",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.21",
+                        "name": "Implement process governance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.22",
+                        "name": "Define environment strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.23",
+                        "name": "Implement project governance approach",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.24",
+                        "name": "Manage organizational change",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.3",
+                        "name": "Manage data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.31",
+                        "name": "Implement application lifecycle management (ALM) strategies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.32",
+                        "name": "Define security approach",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.325",
+                        "name": "Define usability strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.33",
+                        "name": "Define business intelligence, reporting, and analytics strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.34",
+                        "name": "Define testing approach",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.35",
+                        "name": "Define extensions approach",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.36",
+                        "name": "Define integration strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.37",
+                        "name": "Define performance strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.01.4",
+                        "name": "Prepare to go live",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.1",
+                "name": "Define business continuity plan",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.10.01",
+                        "name": "Define business continuity objectives",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.02",
+                        "name": "Conduct a business impact analysis",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.03",
+                        "name": "Identify business continuity risks",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.04",
+                        "name": "Develop a business continuity plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.05",
+                        "name": "Implement a business continuity plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.06",
+                        "name": "Test and validate the business continuity plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.07",
+                        "name": "Maintain and update the business continuity plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.08",
+                        "name": "Identify critical system and data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.09",
+                        "name": "Conduct a disaster risk assessment",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.1",
+                        "name": "Define recovery objectives",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.11",
+                        "name": "Develop a disaster recovery plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.12",
+                        "name": "Implement the disaster recovery plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.13",
+                        "name": "Test and validate the disaster recovery plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.10.14",
+                        "name": "Mitigate and update the disaster recovery plan",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.15",
+                "name": "Manage licensing and entitlements",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.15.01",
+                        "name": "Take inventory on software licenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.02",
+                        "name": "Take inventory on hardware and devices",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.03",
+                        "name": "Perform license requirements analysis",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.04",
+                        "name": "Procure software licenses and add-ons",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.05",
+                        "name": "Allocate or assign software licenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.06",
+                        "name": "Track and analyze software licenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.07",
+                        "name": "Renew software licenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.15.08",
+                        "name": "Retire software licenses",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.2",
+                "name": "Administer system features",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.20.01",
+                        "name": "Configure and administer workflows",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.02",
+                        "name": "Configure, monitor, and send emails",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.03",
+                        "name": "Manage file storage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.04",
+                        "name": "Configure and monitor system generated numbers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.05",
+                        "name": "Configure and maintain cloud-based printing",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.06",
+                        "name": "Configure and maintain electronically generated documents",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.07",
+                        "name": "Configure and manage offline mode for apps",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.08",
+                        "name": "Configure and manage mobile apps and devices",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.085",
+                        "name": "Configure and manage store devices",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.09",
+                        "name": "Configure and management office apps and add-ins",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.1",
+                        "name": "Configure and manage reporting and analytics",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.11",
+                        "name": "Configure and manage search",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.12",
+                        "name": "Configure and manage portals",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.13",
+                        "name": "Manage organizational structure",
+                        "scope": "out-scope",
+                        "products": [
+                            "Sales"
+                        ]
+                    },
+                    {
+                        "id": "99.20.14",
+                        "name": "Configure and manage surveys",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.15",
+                        "name": "Configure and manage IoT devices",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.2",
+                        "name": "Configure and manage copilot capabilities",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.21",
+                        "name": "Configure and manage Microsoft Teams integrations",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.22",
+                        "name": "Configure and manage geofencing and geolocation settings",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.20.23",
+                        "name": "Configure and manage agents",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.25",
+                "name": "Manage system access and security",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.25.01",
+                        "name": "Review access policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.02",
+                        "name": "Review audit logs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.03",
+                        "name": "Enable and configure audit logs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.04",
+                        "name": "Onboard new users",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.05",
+                        "name": "Manage data security",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.06",
+                        "name": "Configure segregation of duties",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.07",
+                        "name": "Manage authentication",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.08",
+                        "name": "Manage and implement encryption",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.09",
+                        "name": "Manage service accounts and certificates",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.1",
+                        "name": "Revoke users access to systems",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.11",
+                        "name": "Update access to systems",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.12",
+                        "name": "Delete users",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.25.13",
+                        "name": "Manage signatures and signing limits",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.3",
+                "name": "Train users and increase adoption",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.30.001",
+                        "name": "Develop training strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.01",
+                        "name": "Identify training needs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.02",
+                        "name": "Develop training materials",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.03",
+                        "name": "Plan training delivery",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.04",
+                        "name": "Conduct training",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.05",
+                        "name": "Provide ongoing support",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.06",
+                        "name": "Measure adoption and success",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.30.07",
+                        "name": "Refine the training program",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.35",
+                "name": "Monitor systems, environments, and capacity",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.35.01",
+                        "name": "Monitor system usage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.02",
+                        "name": "Monitor system performance and health",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.03",
+                        "name": "Detect synchronous integrations failures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.04",
+                        "name": "Detect asynchronous integrations failures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.05",
+                        "name": "Correct synchronous integration failures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.06",
+                        "name": "Monitor storage capacity",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.07",
+                        "name": "Reclaim database storage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.08",
+                        "name": "Configure and manage file storage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.09",
+                        "name": "Clean up and view log storage",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.35.1",
+                        "name": "Purge and archive business data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.4",
+                "name": "Manage background jobs",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.40.01",
+                        "name": "Identify background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.02",
+                        "name": "Create background job schedule",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.03",
+                        "name": "Configure and run background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.04",
+                        "name": "Monitor background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.05",
+                        "name": "Retry background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.06",
+                        "name": "Handle background job errors and exceptions",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.07",
+                        "name": "Analyze background job performance and history",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.08",
+                        "name": "Maintain and optimize background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.40.09",
+                        "name": "Clean up and archive background jobs",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.45",
+                "name": "Manage notifications alerts",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.45.01",
+                        "name": "Identify notification triggers",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.02",
+                        "name": "Define notification channels",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.03",
+                        "name": "Establish notification recipients",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.04",
+                        "name": "Prioritize notifications",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.05",
+                        "name": "Configure monitoring and alert systems",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.06",
+                        "name": "Define notification templates",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.07",
+                        "name": "Test notification and alerts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.45.08",
+                        "name": "Adjust notifications and alerts",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.5",
+                "name": "Uptake software releases",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.50.01",
+                        "name": "Assess software releases",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.02",
+                        "name": "Plan software releases",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.03",
+                        "name": "Test software releases",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.04",
+                        "name": "Deploy software releases",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.05",
+                        "name": "Retire and decommission software",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.06",
+                        "name": "Migrate to new versions of software",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.50.07",
+                        "name": "Implement new features",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.55",
+                "name": "Manage data",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.55.01",
+                        "name": "Manage the initial synchronization of data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.55.02",
+                        "name": "Manage the recurring synchronization of data",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.55.03",
+                        "name": "Monitor data synchronization failures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.55.04",
+                        "name": "Correct data synchronization failures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.6",
+                "name": "Manage system compliance",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.60.01",
+                        "name": "Identify applicable regulations and compliance requirements",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.02",
+                        "name": "Establish compliance policies and procedures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.03",
+                        "name": "Conduct a compliance risk assessment",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.04",
+                        "name": "Implement compliance controls and measures",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.05",
+                        "name": "Monitor compliance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.06",
+                        "name": "Report on compliance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.60.07",
+                        "name": "Respond to non-compliance",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "99.65",
+                "name": "Support systems",
+                "scope": "out-scope",
+                "processes": [
+                    {
+                        "id": "99.65.01",
+                        "name": "Establish support procedures and policies",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.65.02",
+                        "name": "Establish support subscription",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.65.025",
+                        "name": "Develop support transition strategy",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.65.03",
+                        "name": "Manage support incidents",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.65.04",
+                        "name": "Troubleshoot reported incidents",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    },
+                    {
+                        "id": "99.65.05",
+                        "name": "Conduct root cause analysis",
+                        "scope": "out-scope",
+                        "products": [
+                            "Business Central",
+                            "Field Service",
+                            "Finance",
+                            "Supply Chain Management"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

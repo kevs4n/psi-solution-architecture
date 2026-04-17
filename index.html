@@ -3321,39 +3321,94 @@ CONFIG.bpcMapping = {
   }
 
   // Map BPC products to lane roles
-  function deriveLanes(processes) {
-    const productSets = {};
-    processes.forEach(p => {
-      (p.products || []).forEach(prod => {
-        const sys = CONFIG.productSystemMap[prod];
-        if (sys === 'd365fo') productSets['D365 Finance'] = 'system';
-        else if (sys === 'd365ce') productSets['D365 CE'] = 'system';
-        else if (sys === 'power') productSets['Power Platform'] = 'system';
-      });
+  // Determine primary system for a single L3 process from its products
+  function classifyProcess(proc) {
+    const products = proc.products || [];
+    // Priority: specific product names suggest system vs user activity
+    const sysMap = {};
+    products.forEach(prod => {
+      const sys = CONFIG.productSystemMap[prod];
+      if (sys) sysMap[sys] = (sysMap[sys] || 0) + 1;
     });
-    const lanes = [{ id: 'user', name: 'Business User', type: 'role' }];
-    Object.entries(productSets).forEach(([name, type], i) => {
-      lanes.push({ id: `sys${i}`, name, type });
-    });
-    if (lanes.length === 1) lanes.push({ id: 'sys0', name: 'D365 Finance', type: 'system' });
-    return lanes;
+    // Return the dominant system key
+    const sorted = Object.entries(sysMap).sort((a, b) => b[1] - a[1]);
+    return sorted.length > 0 ? sorted[0][0] : 'd365fo';
+  }
+
+  // Categorize a process name to infer whether it's user-facing or system-facing
+  function inferLane(processName, dominantSys) {
+    const lower = processName.toLowerCase();
+    // User/role activities: define, develop, plan, review, approve, assess, negotiate, conduct, train
+    const userVerbs = /^(define|develop|plan|review|approve|assess|negotiate|conduct|train|budget|design|identify|evaluate|monitor|audit|set |prepare|estimate|forecast|recognize)/;
+    // System activities: process, post, generate, calculate, record, reconcile, create, issue, settle, import, export, run
+    const sysVerbs = /^(process|post|generate|calculate|record|reconcile|create|issue|settle|import|export|run |pay |bill|dispatch|consolidat|revalue|close|track|allocat|manage (back|sys|notif|data|lic))/;
+    // Boundary/external activities: sync, send, submit, receive, onboard
+    const extVerbs = /^(sync|send|submit|receive|onboard|report (an |quality)|verify employment)/;
+
+    if (userVerbs.test(lower)) return 'user';
+    if (extVerbs.test(lower)) return 'ext';
+    if (sysVerbs.test(lower)) return dominantSys;
+    // Default: system lane for most BPC processes
+    return dominantSys;
   }
 
   function generateProcessFlow(l2Id, l2Name, processes) {
-    const lanes = deriveLanes(processes);
-    const sysLane = lanes.find(l => l.type === 'system') || lanes[1];
+    // Build lane set from actual product data
+    const systemCounts = {};
+    processes.forEach(p => {
+      const sys = classifyProcess(p);
+      const label = sys === 'd365fo' ? 'D365 Finance' : sys === 'd365ce' ? 'D365 CE' :
+                    sys === 'power' ? 'Power Platform' : sys === 'fabric' ? 'Fabric / BI' :
+                    sys === 'azure' ? 'Azure Services' : sys === 'infra' ? 'Infrastructure' : 'D365';
+      systemCounts[label] = (systemCounts[label] || { sys, count: 0 });
+      systemCounts[label].count++;
+    });
+
+    // Primary system = most frequently referenced
+    const primarySysLabel = Object.entries(systemCounts).sort((a, b) => b[1].count - a[1].count)[0]?.[0] || 'D365 Finance';
+    const primarySysKey = systemCounts[primarySysLabel]?.sys || 'd365fo';
+
+    // Build lanes: always Business User + primary system + any secondary systems
+    const lanes = [
+      { id: 'user', name: 'Business User', type: 'role' },
+      { id: 'sys0', name: primarySysLabel, type: 'system' }
+    ];
+    const laneIdBySys = { 'user': 'user' };
+    laneIdBySys[primarySysKey] = 'sys0';
+
+    let sysIdx = 1;
+    Object.entries(systemCounts).forEach(([label, { sys }]) => {
+      if (sys !== primarySysKey) {
+        const lid = `sys${sysIdx++}`;
+        lanes.push({ id: lid, name: label, type: 'system' });
+        laneIdBySys[sys] = lid;
+      }
+    });
+
+    // Check if any processes infer to 'ext' lane
+    let hasExt = false;
+    processes.forEach(p => {
+      if (inferLane(p.name, primarySysKey) === 'ext') hasExt = true;
+    });
+    if (hasExt) {
+      lanes.push({ id: 'ext', name: 'External', type: 'ext' });
+    }
+
+    // Assign steps to lanes based on process name analysis + product data
     const steps = [];
     const connections = [];
 
     processes.forEach((p, i) => {
-      // Alternate between user and system lane for realistic flow
-      const isSystemStep = i % 2 === 1;
-      const lane = isSystemStep ? sysLane.id : 'user';
+      const procSys = classifyProcess(p);
+      const inferred = inferLane(p.name, procSys);
+      let laneId;
+      if (inferred === 'user') laneId = 'user';
+      else if (inferred === 'ext') laneId = 'ext';
+      else laneId = laneIdBySys[inferred] || laneIdBySys[procSys] || 'sys0';
+
       steps.push({
-        id: `s${i + 1}`, lane, col: i, num: i + 1,
-        label: p.name,
-        data: p.id,
-        type: undefined // regular step
+        id: `s${i + 1}`, lane: laneId, col: i, num: i + 1,
+        label: p.name, data: p.id
       });
     });
 

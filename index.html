@@ -1361,6 +1361,34 @@ button { font-family: inherit; cursor: pointer; }
 .bpc-filter-btn:hover { background: rgba(0,0,0,0.06); }
 .bpc-filter-btn.active { background: var(--header-bg); color: #fff; }
 
+/* ═══════════════════════════════════════════════════════════════
+   TAB 4: PROCESS FLOWS
+   ═══════════════════════════════════════════════════════════════ */
+.flows-container { max-width: 1800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.flows-empty { max-width: 1800px; margin: 40px auto; text-align: center; padding: 60px 24px; background: #fff; border: 1px solid #d4dae2; border-radius: 6px; color: #8899aa; font-size: 14px; }
+.flows-empty strong { color: #4a5568; }
+.flows-summary { font-size: 12px; color: #8899aa; margin-right: auto; font-weight: 500; }
+.flow-card { background: #fff; border: 1px solid #d4dae2; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+.flow-card-header { background: var(--header-bg); color: var(--header-text); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+.flow-l1-crumb { font-size: 10px; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.flow-l2-id { font-size: 13px; font-weight: 800; opacity: 0.5; font-family: 'Cascadia Code','Consolas',monospace; }
+.flow-l2-name { font-size: 13px; font-weight: 700; flex: 1; }
+.flow-scope-count { font-size: 10px; padding: 2px 10px; background: rgba(255,255,255,0.15); border-radius: 10px; white-space: nowrap; }
+.flow-card-body { padding: 16px; min-height: 60px; }
+.flow-generate-prompt { text-align: center; padding: 20px; color: #8899aa; font-size: 13px; }
+.flow-generate-prompt button { margin-top: 10px; padding: 8px 20px; border: none; border-radius: 6px; background: #10b981; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+.flow-generate-prompt button:hover { background: #059669; }
+.flow-svg-container { background: #f5f5f5; border: 1px solid #e2e6ea; border-radius: 4px; overflow-x: auto; overflow-y: hidden; max-height: 260px; }
+.flow-svg-container svg { display: block; min-width: fit-content; }
+.flow-card-actions { display: flex; gap: 6px; padding: 10px 16px; border-top: 1px solid #e8ecf0; background: #fafbfc; }
+.flow-card-actions button { padding: 5px 14px; border: 1px solid #d4dae2; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff; color: #4a5568; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.flow-card-actions button:hover { background: #f0f4f8; }
+.flow-card-actions .flow-btn-open { background: var(--sys-d365fo); color: #fff; border-color: var(--sys-d365fo); }
+.flow-card-actions .flow-btn-open:hover { background: var(--sys-d365fo-hover); }
+.flow-card-actions .flow-btn-remove { color: #e64553; border-color: #fecaca; }
+.flow-card-actions .flow-btn-remove:hover { background: #fef2f2; }
+.flow-regen-hint { font-size: 10px; color: #f59e0b; margin-left: auto; font-weight: 500; }
+
 .persist-banner {
   position: fixed;
   bottom: 16px;
@@ -1390,6 +1418,7 @@ button { font-family: inherit; cursor: pointer; }
   <button class="tab-btn active" data-tab="tab-sa">Solution Architecture</button>
   <button class="tab-btn" data-tab="tab-bpc">BPC Process Scope</button>
   <button class="tab-btn" data-tab="tab-scoped">Scoped Blueprint</button>
+  <button class="tab-btn" data-tab="tab-flows">Process Flows</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -1477,8 +1506,22 @@ button { font-family: inherit; cursor: pointer; }
   <div id="scopedBlueprintContainer"></div>
 </div>
 
-<!-- Hidden file input for import -->
+<!-- ═══════════════════════════════════════════════════════════════
+     TAB 4: PROCESS FLOWS
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-flows">
+  <div class="toolbar">
+    <div class="toolbar-title">Process Flows</div>
+    <span class="flows-summary" id="flowsSummary"></span>
+    <button class="view-toggle" id="flowsGenerateAll" title="Generate flows for all scoped areas">Generate All</button>
+    <button class="view-toggle" id="flowsClearAll" title="Remove all generated flows">Clear All</button>
+  </div>
+  <div id="flowsContainer" class="flows-container"></div>
+</div>
+
+<!-- Hidden file inputs for import -->
 <input type="file" id="importFile" accept=".json" style="display:none" />
+<input type="file" id="flowImportFile" accept=".json" style="display:none" />
 <div class="persist-banner" id="persistBanner">State saved</div>
 
 <!-- Shared: Detail panel -->
@@ -1938,8 +1981,10 @@ CONFIG.bpcMapping = {
     bpcScope: {},       // { processId: 'in-scope' | 'future' | 'out-scope' }
     bpcSearchTerm: '',
     bpcScopeFilter: 'all',
+    processFlows: {},    // { [l2Id]: process-map JSON }
     activeTab: 'tab-sa',
-    scopedDirty: true   // flag to re-render Tab 3 only when needed
+    scopedDirty: true,  // flag to re-render Tab 3 only when needed
+    flowsDirty: true    // flag to re-render Tab 4 only when needed
   };
 
   // Initialize BPC scope from data
@@ -1973,6 +2018,9 @@ CONFIG.bpcMapping = {
           });
         });
       }
+      if (data.processFlows) {
+        state.processFlows = data.processFlows;
+      }
     } catch (e) { /* ignore corrupt localStorage */ }
   })();
 
@@ -2003,6 +2051,11 @@ CONFIG.bpcMapping = {
         renderScopedBlueprint();
         state.scopedDirty = false;
       }
+      // Render Tab 4 on demand
+      if (tabId === 'tab-flows' && state.flowsDirty) {
+        renderProcessFlows();
+        state.flowsDirty = false;
+      }
       // Update tab badges
       updateTabBadges();
     });
@@ -2022,6 +2075,13 @@ CONFIG.bpcMapping = {
     if (!badge2) { badge2 = document.createElement('span'); badge2.className = 'tab-badge'; scopedBtn.appendChild(badge2); }
     badge2.textContent = total > 0 ? total : '';
     badge2.style.display = total > 0 ? '' : 'none';
+    // Tab 4 badge: flow count
+    const flowsBtn = document.querySelector('[data-tab="tab-flows"]');
+    const flowCount = Object.keys(state.processFlows).length;
+    let badge3 = flowsBtn.querySelector('.tab-badge');
+    if (!badge3) { badge3 = document.createElement('span'); badge3.className = 'tab-badge'; flowsBtn.appendChild(badge3); }
+    badge3.textContent = flowCount > 0 ? flowCount : '';
+    badge3.style.display = flowCount > 0 ? '' : 'none';
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -2505,6 +2565,11 @@ CONFIG.bpcMapping = {
       scope.components.push({ id: item.id, name: item.name, system: 'external', status: 'in-scope', layer: 'External Systems', desc: item.desc });
     });
 
+    // Include process flows
+    if (Object.keys(state.processFlows).length > 0) {
+      scope.processFlows = state.processFlows;
+    }
+
     const blob = new Blob([JSON.stringify(scope, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2795,6 +2860,7 @@ CONFIG.bpcMapping = {
           });
           updateBpcSummary();
           state.scopedDirty = true;
+          state.flowsDirty = true;
           saveState();
         });
       });
@@ -2838,6 +2904,7 @@ CONFIG.bpcMapping = {
             });
             updateBpcSummary();
             state.scopedDirty = true;
+            state.flowsDirty = true;
             saveState();
           });
         });
@@ -2881,6 +2948,7 @@ CONFIG.bpcMapping = {
             state.bpcScope[l3.id] = next;
             updateBpcSummary();
             state.scopedDirty = true;
+            state.flowsDirty = true;
             saveState();
           });
 
@@ -3213,6 +3281,341 @@ CONFIG.bpcMapping = {
   });
 
   // ═══════════════════════════════════════════════════════════════
+  // TAB 4: PROCESS FLOWS
+  // ═══════════════════════════════════════════════════════════════
+
+  const FLOW_TOKENS = {
+    stepW: 140, stepH: 50, decisionSize: 70, pillRadius: 25, cornerRadius: 8,
+    laneHeaderW: 40, fontSize: 12, connW: 1.5, arrowSize: 7,
+    minLaneH: 120, hGap: 200, startX: 80, startY: 60,
+    colors: {
+      startFill: '#a6e3a1', startStroke: '#40a02b',
+      processFill: '#ffffff', processStroke: '#585b70',
+      decisionFill: '#f9e2af', decisionStroke: '#df8e1d',
+      endFill: '#f5c2e7', endStroke: '#ea76cb',
+      connStroke: '#585b70',
+      laneColors: ['rgba(137,180,250,0.10)','rgba(166,227,161,0.10)','rgba(249,226,175,0.10)','rgba(245,194,231,0.10)','rgba(203,166,247,0.10)'],
+      laneHeaders: ['rgba(137,180,250,0.25)','rgba(166,227,161,0.25)','rgba(249,226,175,0.25)','rgba(245,194,231,0.25)','rgba(203,166,247,0.25)'],
+      laneBorder: '#ccd0da', canvasBg: '#f5f5f5'
+    }
+  };
+
+  function flowSvgEl(tag, attrs) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+    return el;
+  }
+
+  function getScopedL2Areas() {
+    const result = [];
+    CONFIG.bpc.forEach(l1 => {
+      l1.areas.forEach(l2 => {
+        const scoped = l2.processes.filter(l3 => {
+          const s = state.bpcScope[l3.id];
+          return s === 'in-scope' || s === 'future';
+        });
+        if (scoped.length > 0) result.push({ l1, l2, scopedProcesses: scoped });
+      });
+    });
+    return result;
+  }
+
+  function generateProcessFlow(l2Id, l2Name, processes) {
+    const lane = { id: 'l1', name: l2Name, color: 0 };
+    const steps = processes.map((p, i) => {
+      let type = 'process';
+      if (i === 0) type = 'start';
+      else if (i === processes.length - 1) type = 'end';
+      return {
+        id: `s${i + 1}`, laneId: 'l1',
+        label: p.name.length > 28 ? p.name.slice(0, 25) + '...' : p.name,
+        type, x: FLOW_TOKENS.startX + i * FLOW_TOKENS.hGap, y: FLOW_TOKENS.startY,
+        adoRef: '', description: p.id
+      };
+    });
+    const connections = [];
+    for (let i = 0; i < steps.length - 1; i++) {
+      connections.push({ id: `c${i + 1}`, from: steps[i].id, to: steps[i + 1].id, label: '' });
+    }
+    return { title: `${l2Id} ${l2Name}`, lanes: [lane], steps, connections };
+  }
+
+  // ── Inline SVG swimlane renderer (ported from psi-process-map) ──
+  function renderFlowSVG(pj) {
+    const T = FLOW_TOKENS;
+    const C = T.colors;
+    const ns = 'http://www.w3.org/2000/svg';
+
+    // Build step lookup
+    const stepMap = {};
+    pj.steps.forEach(s => { stepMap[s.id] = { ...s }; });
+
+    // Compute lane bands
+    const laneBands = [];
+    let bandY = 0;
+    pj.lanes.forEach((lane, li) => {
+      const laneSteps = pj.steps.filter(s => s.laneId === lane.id);
+      let maxY = 0;
+      laneSteps.forEach(s => {
+        const h = s.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
+        if (s.y + h > maxY) maxY = s.y + h;
+      });
+      const height = Math.max(T.minLaneH, maxY + 40);
+      laneBands.push({ lane, y: bandY, height, colorIdx: li % 5 });
+      bandY += height;
+    });
+    const totalH = bandY + 10;
+
+    // Compute display positions (add lane Y offset)
+    const laneYMap = {};
+    laneBands.forEach(b => { laneYMap[b.lane.id] = b.y; });
+    const displaySteps = {};
+    pj.steps.forEach(s => {
+      displaySteps[s.id] = { ...s, dy: s.y + (laneYMap[s.laneId] || 0) };
+    });
+
+    // Compute SVG width
+    let maxX = 800;
+    pj.steps.forEach(s => {
+      const w = s.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
+      if (s.x + w + 40 > maxX) maxX = s.x + w + 40;
+    });
+    maxX += T.laneHeaderW;
+
+    // Create SVG
+    const svg = flowSvgEl('svg', { viewBox: `0 0 ${maxX} ${totalH}`, width: maxX, height: totalH });
+    svg.style.background = C.canvasBg;
+    svg.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
+
+    // Arrowhead marker
+    const defs = flowSvgEl('defs');
+    const marker = flowSvgEl('marker', { id: 'fArrow', viewBox: '0 0 10 7', refX: '9', refY: '3.5', markerWidth: '7', markerHeight: '5', orient: 'auto' });
+    marker.appendChild(flowSvgEl('polygon', { points: '0 0, 10 3.5, 0 7', fill: C.connStroke }));
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    // Render lane bands
+    laneBands.forEach(b => {
+      // Background
+      svg.appendChild(flowSvgEl('rect', { x: 0, y: b.y, width: maxX, height: b.height, fill: C.laneColors[b.colorIdx], stroke: C.laneBorder, 'stroke-width': '0.5' }));
+      // Header
+      svg.appendChild(flowSvgEl('rect', { x: 0, y: b.y, width: T.laneHeaderW, height: b.height, fill: C.laneHeaders[b.colorIdx] }));
+      // Lane label (rotated)
+      const txt = flowSvgEl('text', { x: T.laneHeaderW / 2, y: b.y + b.height / 2, fill: '#555', 'font-size': '11', 'font-weight': '600', 'text-anchor': 'middle', 'dominant-baseline': 'central', transform: `rotate(-90, ${T.laneHeaderW / 2}, ${b.y + b.height / 2})` });
+      txt.textContent = b.lane.name.length > 22 ? b.lane.name.slice(0, 20) + '..' : b.lane.name;
+      svg.appendChild(txt);
+    });
+
+    // Offset all step X by laneHeaderW
+    const oX = T.laneHeaderW;
+
+    // Render connectors
+    pj.connections.forEach(conn => {
+      const from = displaySteps[conn.from];
+      const to = displaySteps[conn.to];
+      if (!from || !to) return;
+      const fx = from.x + oX, fy = from.dy, tx = to.x + oX, ty = to.dy;
+      const dx = tx - fx, dy = ty - fy;
+      // Port selection
+      let sx, sy, ex, ey;
+      const fHalf = from.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
+      const fHalfV = from.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
+      const tHalf = to.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
+      const tHalfV = to.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) { sx = fx + fHalf; sy = fy; ex = tx - tHalf; ey = ty; }
+        else { sx = fx - fHalf; sy = fy; ex = tx + tHalf; ey = ty; }
+      } else {
+        if (dy > 0) { sx = fx; sy = fy + fHalfV; ex = tx; ey = ty - tHalfV; }
+        else { sx = fx; sy = fy - fHalfV; ex = tx; ey = ty + tHalfV; }
+      }
+      const cdx = ex - sx;
+      const d = `M ${sx},${sy} C ${sx + cdx * 0.4},${sy} ${ex - cdx * 0.4},${ey} ${ex},${ey}`;
+      svg.appendChild(flowSvgEl('path', { d, fill: 'none', stroke: C.connStroke, 'stroke-width': T.connW, 'marker-end': 'url(#fArrow)' }));
+      if (conn.label) {
+        const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+        const lbl = flowSvgEl('text', { x: mx, y: my - 8, fill: '#555', 'font-size': '10', 'font-weight': '600', 'text-anchor': 'middle' });
+        lbl.textContent = conn.label;
+        svg.appendChild(lbl);
+      }
+    });
+
+    // Render steps
+    pj.steps.forEach(s => {
+      const x = s.x + oX, y = displaySteps[s.id].dy;
+      const g = flowSvgEl('g', { transform: `translate(${x},${y})` });
+      const colors = { start: [C.startFill, C.startStroke], end: [C.endFill, C.endStroke], decision: [C.decisionFill, C.decisionStroke], process: [C.processFill, C.processStroke] };
+      const [fill, stroke] = colors[s.type] || colors.process;
+      if (s.type === 'decision') {
+        const half = T.decisionSize / 2;
+        g.appendChild(flowSvgEl('polygon', { points: `0,${-half} ${half},0 0,${half} ${-half},0`, fill, stroke, 'stroke-width': '1.5' }));
+      } else {
+        const rx = (s.type === 'start' || s.type === 'end') ? T.pillRadius : T.cornerRadius;
+        g.appendChild(flowSvgEl('rect', { x: -T.stepW / 2, y: -T.stepH / 2, width: T.stepW, height: T.stepH, rx, ry: rx, fill, stroke, 'stroke-width': '1.5' }));
+      }
+      // Label
+      const label = s.label.length > 20 ? s.label.slice(0, 18) + '..' : s.label;
+      const fontSize = s.label.length > 16 ? 10 : T.fontSize;
+      const txt = flowSvgEl('text', { x: 0, y: 0, fill: '#333', 'font-size': fontSize, 'font-weight': '500', 'text-anchor': 'middle', 'dominant-baseline': 'central' });
+      txt.textContent = label;
+      txt.style.pointerEvents = 'none';
+      txt.style.userSelect = 'none';
+      g.appendChild(txt);
+      svg.appendChild(g);
+    });
+
+    return svg;
+  }
+
+  // ── Render Tab 4 ──
+  function renderProcessFlows() {
+    const container = $('#flowsContainer');
+    container.innerHTML = '';
+    const areas = getScopedL2Areas();
+
+    if (areas.length === 0) {
+      container.innerHTML = '<div class="flows-empty"><strong>No processes scoped yet.</strong><br>Scope processes in the BPC tab to see process flow cards here.</div>';
+      $('#flowsSummary').textContent = '';
+      return;
+    }
+
+    const flowCount = Object.keys(state.processFlows).filter(k => areas.some(a => a.l2.id === k)).length;
+    $('#flowsSummary').textContent = `${flowCount} of ${areas.length} flows generated`;
+
+    areas.forEach(({ l1, l2, scopedProcesses }) => {
+      const card = document.createElement('div');
+      card.className = 'flow-card';
+      card.dataset.l2Id = l2.id;
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'flow-card-header';
+      header.innerHTML = `
+        <span class="flow-l1-crumb">${l1.name} \u203A</span>
+        <span class="flow-l2-id">${l2.id}</span>
+        <span class="flow-l2-name">${l2.name}</span>
+        <span class="flow-scope-count">${scopedProcesses.length} processes</span>
+      `;
+      card.appendChild(header);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'flow-card-body';
+
+      const existingFlow = state.processFlows[l2.id];
+
+      if (existingFlow) {
+        // Check if stale (process count mismatch)
+        const stale = existingFlow.steps.length !== scopedProcesses.length;
+        // SVG preview
+        const svgContainer = document.createElement('div');
+        svgContainer.className = 'flow-svg-container';
+        svgContainer.appendChild(renderFlowSVG(existingFlow));
+        body.appendChild(svgContainer);
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'flow-card-actions';
+        actions.innerHTML = `
+          <button class="flow-btn-open" data-action="open">Open in Process Map</button>
+          <button data-action="import">Import</button>
+          <button data-action="regen">Regenerate</button>
+          <button class="flow-btn-remove" data-action="remove">Remove</button>
+          ${stale ? '<span class="flow-regen-hint">\u26A0 Scope changed since generation</span>' : ''}
+        `;
+        actions.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => handleFlowAction(btn.dataset.action, l2.id, l2.name, scopedProcesses));
+        });
+        body.appendChild(actions);
+      } else {
+        body.innerHTML = `<div class="flow-generate-prompt">No process flow defined for this area.<br><button data-action="generate">Generate Flow</button></div>`;
+        body.querySelector('button').addEventListener('click', () => {
+          state.processFlows[l2.id] = generateProcessFlow(l2.id, l2.name, scopedProcesses);
+          state.flowsDirty = true;
+          renderProcessFlows();
+          saveState();
+        });
+      }
+
+      card.appendChild(body);
+      container.appendChild(card);
+    });
+  }
+
+  function handleFlowAction(action, l2Id, l2Name, scopedProcesses) {
+    switch (action) {
+      case 'open': {
+        const json = JSON.stringify(state.processFlows[l2Id], null, 2);
+        navigator.clipboard.writeText(json).then(() => {
+          showPersistBanner('JSON copied \u2014 paste in Process Map');
+        }).catch(() => {
+          showPersistBanner('Open Process Map and import the JSON');
+        });
+        window.open('https://calm-rock-09b727d03.7.azurestaticapps.net', '_blank');
+        break;
+      }
+      case 'import': {
+        const input = $('#flowImportFile');
+        input.dataset.targetL2 = l2Id;
+        input.click();
+        break;
+      }
+      case 'regen':
+        state.processFlows[l2Id] = generateProcessFlow(l2Id, l2Name, scopedProcesses);
+        state.flowsDirty = true;
+        renderProcessFlows();
+        saveState();
+        break;
+      case 'remove':
+        delete state.processFlows[l2Id];
+        state.flowsDirty = true;
+        renderProcessFlows();
+        saveState();
+        break;
+    }
+  }
+
+  // Flow import file handler
+  $('#flowImportFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const l2Id = e.target.dataset.targetL2;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (!data.lanes || !data.steps || !data.connections) throw new Error('Missing lanes/steps/connections');
+        state.processFlows[l2Id] = data;
+        state.flowsDirty = true;
+        renderProcessFlows();
+        saveState();
+        showPersistBanner('Flow imported');
+      } catch (err) {
+        alert('Invalid process flow JSON: ' + err.message);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  // Generate All / Clear All
+  $('#flowsGenerateAll').addEventListener('click', () => {
+    getScopedL2Areas().forEach(({ l2, scopedProcesses }) => {
+      if (!state.processFlows[l2.id]) {
+        state.processFlows[l2.id] = generateProcessFlow(l2.id, l2.name, scopedProcesses);
+      }
+    });
+    state.flowsDirty = true;
+    renderProcessFlows();
+    saveState();
+  });
+  $('#flowsClearAll').addEventListener('click', () => {
+    state.processFlows = {};
+    state.flowsDirty = true;
+    renderProcessFlows();
+    saveState();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
   // PERSISTENCE — localStorage save/restore
   // ═══════════════════════════════════════════════════════════════
   function saveState() {
@@ -3227,7 +3630,8 @@ CONFIG.bpcMapping = {
       });
       localStorage.setItem('psi-sa-state', JSON.stringify({
         bpcScope: state.bpcScope,
-        componentStatuses
+        componentStatuses,
+        processFlows: state.processFlows
       }));
       showPersistBanner('State saved');
     } catch (e) { /* quota exceeded */ }
@@ -3270,6 +3674,9 @@ CONFIG.bpcMapping = {
             });
           });
         }
+        if (data.processFlows) {
+          Object.assign(state.processFlows, data.processFlows);
+        }
         // Re-render
         $('#layersStack').innerHTML = '';
         renderLayers();
@@ -3277,6 +3684,7 @@ CONFIG.bpcMapping = {
         renderBpcTree();
         updateBpcSummary();
         state.scopedDirty = true;
+        state.flowsDirty = true;
         saveState();
         showPersistBanner('Scope imported');
       } catch (err) {
@@ -3293,9 +3701,9 @@ CONFIG.bpcMapping = {
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     // Alt+1/2/3 for tab switching
-    if (e.altKey && (e.key === '1' || e.key === '2' || e.key === '3')) {
+    if (e.altKey && (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4')) {
       e.preventDefault();
-      const tabs = ['tab-sa', 'tab-bpc', 'tab-scoped'];
+      const tabs = ['tab-sa', 'tab-bpc', 'tab-scoped', 'tab-flows'];
       const btn = document.querySelector(`[data-tab="${tabs[parseInt(e.key) - 1]}"]`);
       if (btn) btn.click();
     }

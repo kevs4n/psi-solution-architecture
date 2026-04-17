@@ -1378,7 +1378,7 @@ button { font-family: inherit; cursor: pointer; }
 .flow-generate-prompt { text-align: center; padding: 20px; color: #8899aa; font-size: 13px; }
 .flow-generate-prompt button { margin-top: 10px; padding: 8px 20px; border: none; border-radius: 6px; background: #10b981; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s; }
 .flow-generate-prompt button:hover { background: #059669; }
-.flow-svg-container { background: #f5f5f5; border: 1px solid #e2e6ea; border-radius: 4px; overflow-x: auto; overflow-y: hidden; max-height: 260px; }
+.flow-svg-container { background: #f5f5f5; border: 1px solid #e2e6ea; border-radius: 4px; overflow-x: auto; }
 .flow-svg-container svg { display: block; min-width: fit-content; }
 .flow-card-actions { display: flex; gap: 6px; padding: 10px 16px; border-top: 1px solid #e8ecf0; background: #fafbfc; }
 .flow-card-actions button { padding: 5px 14px; border: 1px solid #d4dae2; border-radius: 5px; font-size: 11px; font-weight: 600; background: #fff; color: #4a5568; cursor: pointer; font-family: inherit; transition: all 0.15s; }
@@ -1443,6 +1443,7 @@ button { font-family: inherit; cursor: pointer; }
       <button class="flow-btn" data-type="integration">Integration</button>
       <button class="flow-btn" data-type="external">External</button>
     </div>
+    <div class="status-legend" id="statusLegend"></div>
   </div>
 
   <div class="blueprint" id="blueprint" style="position: relative;">
@@ -1463,7 +1464,6 @@ button { font-family: inherit; cursor: pointer; }
     </div>
     <div class="bp-footer">
       <div class="bp-summary" id="bpSummary"></div>
-      <div class="status-legend" id="statusLegend"></div>
       <div class="bp-meta" id="bpMeta"></div>
     </div>
     <svg class="connections-overlay" id="connectionsOverlay"></svg>
@@ -3476,10 +3476,17 @@ CONFIG.bpcMapping = {
       return;
     }
 
+    let needsSave = false;
     const flowCount = Object.keys(state.processFlows).filter(k => areas.some(a => a.l2.id === k)).length;
     $('#flowsSummary').textContent = `${flowCount} of ${areas.length} flows generated`;
 
     areas.forEach(({ l1, l2, scopedProcesses }) => {
+      // Auto-generate if no flow exists yet
+      if (!state.processFlows[l2.id]) {
+        state.processFlows[l2.id] = generateProcessFlow(l2.id, l2.name, scopedProcesses);
+        needsSave = true;
+      }
+
       const card = document.createElement('div');
       card.className = 'flow-card';
       card.dataset.l2Id = l2.id;
@@ -3513,7 +3520,7 @@ CONFIG.bpcMapping = {
         const actions = document.createElement('div');
         actions.className = 'flow-card-actions';
         actions.innerHTML = `
-          <button class="flow-btn-open" data-action="open">Open in Process Map</button>
+          <button class="flow-btn-open" data-action="open">Open in Process Map (WIP)</button>
           <button data-action="import">Import</button>
           <button data-action="regen">Regenerate</button>
           <button class="flow-btn-remove" data-action="remove">Remove</button>
@@ -3536,6 +3543,7 @@ CONFIG.bpcMapping = {
       card.appendChild(body);
       container.appendChild(card);
     });
+    if (needsSave) saveState();
   }
 
   function handleFlowAction(action, l2Id, l2Name, scopedProcesses) {

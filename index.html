@@ -3284,26 +3284,26 @@ CONFIG.bpcMapping = {
   // TAB 4: PROCESS FLOWS
   // ═══════════════════════════════════════════════════════════════
 
-  const FLOW_TOKENS = {
-    stepW: 140, stepH: 50, decisionSize: 70, pillRadius: 25, cornerRadius: 8,
-    laneHeaderW: 40, fontSize: 12, connW: 1.5, arrowSize: 7,
-    minLaneH: 120, hGap: 200, startX: 80, startY: 60,
-    colors: {
-      startFill: '#a6e3a1', startStroke: '#40a02b',
-      processFill: '#ffffff', processStroke: '#585b70',
-      decisionFill: '#f9e2af', decisionStroke: '#df8e1d',
-      endFill: '#f5c2e7', endStroke: '#ea76cb',
-      connStroke: '#585b70',
-      laneColors: ['rgba(137,180,250,0.10)','rgba(166,227,161,0.10)','rgba(249,226,175,0.10)','rgba(245,194,231,0.10)','rgba(203,166,247,0.10)'],
-      laneHeaders: ['rgba(137,180,250,0.25)','rgba(166,227,161,0.25)','rgba(249,226,175,0.25)','rgba(245,194,231,0.25)','rgba(203,166,247,0.25)'],
-      laneBorder: '#ccd0da', canvasBg: '#f5f5f5'
-    }
+  // ── Freja-quality swimlane renderer (ported from rfp-freja) ──
+  const SL = {
+    stepW: 150, stepH: 60, decisionS: 60, hGap: 195, vPad: 55,
+    laneHeaderW: 110, contentStartX: 105, cornerR: 6, wrapChars: 18, hdrWrapChars: 12,
+    laneColors: {
+      role:   { bg: '#ffffff', text: '#2d2d3a', border: '#e5e7eb' },
+      system: { bg: '#eff6ff', text: '#2563eb', border: '#dbeafe' },
+      ext:    { bg: '#f5f3ff', text: '#7c3aed', border: '#e9d5ff' },
+      boundary:{ bg: '#fffbeb', text: '#92400e', border: '#fde68a' }
+    },
+    connStroke: '#8b95a5', numBg: '#1e3a5f',
+    stepFill: '#ffffff', stepStroke: '#e5e7eb',
+    decisionFill: '#fdf4e7', decisionStroke: '#E1A143'
   };
 
-  function flowSvgEl(tag, attrs) {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
-    return el;
+  function slWrapLabel(text, maxChars) {
+    if (text.length <= maxChars) return [text];
+    const sp = text.lastIndexOf(' ', maxChars);
+    if (sp > 0) return [text.slice(0, sp), text.slice(sp + 1)];
+    return [text.slice(0, maxChars), text.slice(maxChars)];
   }
 
   function getScopedL2Areas() {
@@ -3320,150 +3320,147 @@ CONFIG.bpcMapping = {
     return result;
   }
 
-  function generateProcessFlow(l2Id, l2Name, processes) {
-    const lane = { id: 'l1', name: l2Name, color: 0 };
-    const steps = processes.map((p, i) => {
-      let type = 'process';
-      if (i === 0) type = 'start';
-      else if (i === processes.length - 1) type = 'end';
-      return {
-        id: `s${i + 1}`, laneId: 'l1',
-        label: p.name.length > 28 ? p.name.slice(0, 25) + '...' : p.name,
-        type, x: FLOW_TOKENS.startX + i * FLOW_TOKENS.hGap, y: FLOW_TOKENS.startY,
-        adoRef: '', description: p.id
-      };
+  // Map BPC products to lane roles
+  function deriveLanes(processes) {
+    const productSets = {};
+    processes.forEach(p => {
+      (p.products || []).forEach(prod => {
+        const sys = CONFIG.productSystemMap[prod];
+        if (sys === 'd365fo') productSets['D365 Finance'] = 'system';
+        else if (sys === 'd365ce') productSets['D365 CE'] = 'system';
+        else if (sys === 'power') productSets['Power Platform'] = 'system';
+      });
     });
-    const connections = [];
-    for (let i = 0; i < steps.length - 1; i++) {
-      connections.push({ id: `c${i + 1}`, from: steps[i].id, to: steps[i + 1].id, label: '' });
-    }
-    return { title: `${l2Id} ${l2Name}`, lanes: [lane], steps, connections };
+    const lanes = [{ id: 'user', name: 'Business User', type: 'role' }];
+    Object.entries(productSets).forEach(([name, type], i) => {
+      lanes.push({ id: `sys${i}`, name, type });
+    });
+    if (lanes.length === 1) lanes.push({ id: 'sys0', name: 'D365 Finance', type: 'system' });
+    return lanes;
   }
 
-  // ── Inline SVG swimlane renderer (ported from psi-process-map) ──
-  function renderFlowSVG(pj) {
-    const T = FLOW_TOKENS;
-    const C = T.colors;
-    const ns = 'http://www.w3.org/2000/svg';
+  function generateProcessFlow(l2Id, l2Name, processes) {
+    const lanes = deriveLanes(processes);
+    const sysLane = lanes.find(l => l.type === 'system') || lanes[1];
+    const steps = [];
+    const connections = [];
 
-    // Build step lookup
-    const stepMap = {};
-    pj.steps.forEach(s => { stepMap[s.id] = { ...s }; });
-
-    // Compute lane bands
-    const laneBands = [];
-    let bandY = 0;
-    pj.lanes.forEach((lane, li) => {
-      const laneSteps = pj.steps.filter(s => s.laneId === lane.id);
-      let maxY = 0;
-      laneSteps.forEach(s => {
-        const h = s.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
-        if (s.y + h > maxY) maxY = s.y + h;
+    processes.forEach((p, i) => {
+      // Alternate between user and system lane for realistic flow
+      const isSystemStep = i % 2 === 1;
+      const lane = isSystemStep ? sysLane.id : 'user';
+      steps.push({
+        id: `s${i + 1}`, lane, col: i, num: i + 1,
+        label: p.name,
+        data: p.id,
+        type: undefined // regular step
       });
-      const height = Math.max(T.minLaneH, maxY + 40);
-      laneBands.push({ lane, y: bandY, height, colorIdx: li % 5 });
-      bandY += height;
-    });
-    const totalH = bandY + 10;
-
-    // Compute display positions (add lane Y offset)
-    const laneYMap = {};
-    laneBands.forEach(b => { laneYMap[b.lane.id] = b.y; });
-    const displaySteps = {};
-    pj.steps.forEach(s => {
-      displaySteps[s.id] = { ...s, dy: s.y + (laneYMap[s.laneId] || 0) };
     });
 
-    // Compute SVG width
-    let maxX = 800;
-    pj.steps.forEach(s => {
-      const w = s.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
-      if (s.x + w + 40 > maxX) maxX = s.x + w + 40;
-    });
-    maxX += T.laneHeaderW;
+    // Sequential connections
+    for (let i = 0; i < steps.length - 1; i++) {
+      connections.push({ from: steps[i].id, to: steps[i + 1].id });
+    }
 
-    // Create SVG
-    const svg = flowSvgEl('svg', { viewBox: `0 0 ${maxX} ${totalH}`, width: maxX, height: totalH });
-    svg.style.background = C.canvasBg;
-    svg.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
+    return { title: `${l2Id} ${l2Name}`, lanes, steps, connections };
+  }
 
-    // Arrowhead marker
-    const defs = flowSvgEl('defs');
-    const marker = flowSvgEl('marker', { id: 'fArrow', viewBox: '0 0 10 7', refX: '9', refY: '3.5', markerWidth: '7', markerHeight: '5', orient: 'auto' });
-    marker.appendChild(flowSvgEl('polygon', { points: '0 0, 10 3.5, 0 7', fill: C.connStroke }));
-    defs.appendChild(marker);
-    svg.appendChild(defs);
+  function renderFlowSVG(flow, uniqueId) {
+    const lanes = flow.lanes, steps = flow.steps, conns = flow.connections || [];
+    const laneH = SL.stepH + SL.vPad * 2;
+    const totalH = lanes.length * laneH;
+    const maxCol = Math.max(...steps.map(s => s.col), 0) + 1;
+    const bodyW = SL.contentStartX + maxCol * SL.hGap + 60;
+    const totalW = SL.laneHeaderW + bodyW;
 
-    // Render lane bands
-    laneBands.forEach(b => {
-      // Background
-      svg.appendChild(flowSvgEl('rect', { x: 0, y: b.y, width: maxX, height: b.height, fill: C.laneColors[b.colorIdx], stroke: C.laneBorder, 'stroke-width': '0.5' }));
-      // Header
-      svg.appendChild(flowSvgEl('rect', { x: 0, y: b.y, width: T.laneHeaderW, height: b.height, fill: C.laneHeaders[b.colorIdx] }));
-      // Lane label (rotated)
-      const txt = flowSvgEl('text', { x: T.laneHeaderW / 2, y: b.y + b.height / 2, fill: '#555', 'font-size': '11', 'font-weight': '600', 'text-anchor': 'middle', 'dominant-baseline': 'central', transform: `rotate(-90, ${T.laneHeaderW / 2}, ${b.y + b.height / 2})` });
-      txt.textContent = b.lane.name.length > 22 ? b.lane.name.slice(0, 20) + '..' : b.lane.name;
-      svg.appendChild(txt);
+    const laneIndex = {};
+    lanes.forEach((l, i) => { laneIndex[l.id] = i; });
+    const boxPos = {};
+    steps.forEach(s => {
+      const li = laneIndex[s.lane] || 0;
+      const x = SL.laneHeaderW + SL.contentStartX + s.col * SL.hGap;
+      const y = li * laneH + (laneH - SL.stepH) / 2;
+      const w = s.type === 'decision' ? SL.decisionS : SL.stepW;
+      boxPos[s.id] = { x, y, w, h: SL.stepH, laneIdx: li };
     });
 
-    // Offset all step X by laneHeaderW
-    const oX = T.laneHeaderW;
+    const mid = `fl-${uniqueId}`;
+    let svg = `<svg width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg" style="display:block;font-family:'Segoe UI',system-ui,sans-serif;background:#fafbfc">`;
+    svg += `<defs><marker id="ah-${mid}" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="${SL.connStroke}"/></marker></defs>`;
 
-    // Render connectors
-    pj.connections.forEach(conn => {
-      const from = displaySteps[conn.from];
-      const to = displaySteps[conn.to];
-      if (!from || !to) return;
-      const fx = from.x + oX, fy = from.dy, tx = to.x + oX, ty = to.dy;
-      const dx = tx - fx, dy = ty - fy;
-      // Port selection
-      let sx, sy, ex, ey;
-      const fHalf = from.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
-      const fHalfV = from.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
-      const tHalf = to.type === 'decision' ? T.decisionSize / 2 : T.stepW / 2;
-      const tHalfV = to.type === 'decision' ? T.decisionSize / 2 : T.stepH / 2;
-      if (Math.abs(dx) > Math.abs(dy)) {
-        if (dx > 0) { sx = fx + fHalf; sy = fy; ex = tx - tHalf; ey = ty; }
-        else { sx = fx - fHalf; sy = fy; ex = tx + tHalf; ey = ty; }
+    // Lane headers + backgrounds
+    lanes.forEach((lane, i) => {
+      const col = SL.laneColors[lane.type] || SL.laneColors.role;
+      const y = i * laneH;
+      // Full row bg
+      svg += `<rect x="${SL.laneHeaderW}" y="${y}" width="${bodyW}" height="${laneH}" fill="${col.bg}" stroke="${col.border}" stroke-width="0.5"/>`;
+      // Header cell
+      svg += `<rect x="0" y="${y}" width="${SL.laneHeaderW}" height="${laneH}" fill="${col.bg}" stroke="${col.border}" stroke-width="1"/>`;
+      // Header text
+      const lines = slWrapLabel(lane.name, SL.hdrWrapChars);
+      if (lines.length === 1) {
+        svg += `<text x="${SL.laneHeaderW/2}" y="${y + laneH/2}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="${col.text}">${lines[0]}</text>`;
       } else {
-        if (dy > 0) { sx = fx; sy = fy + fHalfV; ex = tx; ey = ty - tHalfV; }
-        else { sx = fx; sy = fy - fHalfV; ex = tx; ey = ty + tHalfV; }
-      }
-      const cdx = ex - sx;
-      const d = `M ${sx},${sy} C ${sx + cdx * 0.4},${sy} ${ex - cdx * 0.4},${ey} ${ex},${ey}`;
-      svg.appendChild(flowSvgEl('path', { d, fill: 'none', stroke: C.connStroke, 'stroke-width': T.connW, 'marker-end': 'url(#fArrow)' }));
-      if (conn.label) {
-        const mx = (sx + ex) / 2, my = (sy + ey) / 2;
-        const lbl = flowSvgEl('text', { x: mx, y: my - 8, fill: '#555', 'font-size': '10', 'font-weight': '600', 'text-anchor': 'middle' });
-        lbl.textContent = conn.label;
-        svg.appendChild(lbl);
+        svg += `<text x="${SL.laneHeaderW/2}" y="${y + laneH/2 - 7}" text-anchor="middle" font-size="11" font-weight="700" fill="${col.text}"><tspan x="${SL.laneHeaderW/2}" dy="0">${lines[0]}</tspan><tspan x="${SL.laneHeaderW/2}" dy="1.2em">${lines[1]}</tspan></text>`;
       }
     });
 
-    // Render steps
-    pj.steps.forEach(s => {
-      const x = s.x + oX, y = displaySteps[s.id].dy;
-      const g = flowSvgEl('g', { transform: `translate(${x},${y})` });
-      const colors = { start: [C.startFill, C.startStroke], end: [C.endFill, C.endStroke], decision: [C.decisionFill, C.decisionStroke], process: [C.processFill, C.processStroke] };
-      const [fill, stroke] = colors[s.type] || colors.process;
+    // Connections
+    conns.forEach(c => {
+      const fb = boxPos[c.from], tb = boxPos[c.to];
+      if (!fb || !tb) return;
+      let s, e, path;
+      if (fb.laneIdx === tb.laneIdx) {
+        s = { x: fb.x + fb.w, y: fb.y + fb.h / 2 };
+        e = { x: tb.x, y: tb.y + tb.h / 2 };
+        path = `M${s.x},${s.y} L${e.x},${e.y}`;
+      } else {
+        const goDown = tb.laneIdx > fb.laneIdx;
+        s = { x: fb.x + fb.w / 2, y: goDown ? fb.y + fb.h : fb.y };
+        e = { x: tb.x, y: tb.y + tb.h / 2 };
+        const r = SL.cornerR;
+        path = `M${s.x},${s.y} L${s.x},${e.y + (goDown ? -r : r)} Q${s.x},${e.y} ${s.x + r},${e.y} L${e.x},${e.y}`;
+      }
+      svg += `<path d="${path}" fill="none" stroke="${SL.connStroke}" stroke-width="1.5" marker-end="url(#ah-${mid})"/>`;
+      if (c.label) {
+        const mx = (fb.x + fb.w / 2 + tb.x) / 2;
+        const my = (fb.y + fb.h / 2 + tb.y + tb.h / 2) / 2;
+        svg += `<rect x="${mx-25}" y="${my-8}" width="50" height="16" rx="8" fill="#fff" stroke="${SL.connStroke}" stroke-width="0.5"/>`;
+        svg += `<text x="${mx}" y="${my+3}" text-anchor="middle" font-size="9" fill="${SL.connStroke}">${c.label}</text>`;
+      }
+    });
+
+    // Steps
+    steps.forEach(s => {
+      const bp = boxPos[s.id];
+      if (!bp) return;
       if (s.type === 'decision') {
-        const half = T.decisionSize / 2;
-        g.appendChild(flowSvgEl('polygon', { points: `0,${-half} ${half},0 0,${half} ${-half},0`, fill, stroke, 'stroke-width': '1.5' }));
+        const cx = bp.x + bp.w/2, cy = bp.y + bp.h/2, hw = bp.w/2, hh = bp.h/2;
+        svg += `<polygon points="${cx},${cy-hh} ${cx+hw},${cy} ${cx},${cy+hh} ${cx-hw},${cy}" fill="${SL.decisionFill}" stroke="${SL.decisionStroke}" stroke-width="1.5"/>`;
+        const lines = slWrapLabel(s.label, SL.wrapChars);
+        svg += `<text x="${cx}" y="${cy+3}" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e">${lines[0]}</text>`;
       } else {
-        const rx = (s.type === 'start' || s.type === 'end') ? T.pillRadius : T.cornerRadius;
-        g.appendChild(flowSvgEl('rect', { x: -T.stepW / 2, y: -T.stepH / 2, width: T.stepW, height: T.stepH, rx, ry: rx, fill, stroke, 'stroke-width': '1.5' }));
+        svg += `<rect x="${bp.x}" y="${bp.y}" width="${bp.w}" height="${bp.h}" rx="8" fill="${SL.stepFill}" stroke="${SL.stepStroke}" stroke-width="1"/>`;
+        if (s.num) {
+          svg += `<circle cx="${bp.x+14}" cy="${bp.y+14}" r="9" fill="${SL.numBg}"/>`;
+          svg += `<text x="${bp.x+14}" y="${bp.y+17}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">${s.num}</text>`;
+        }
+        const lines = slWrapLabel(s.label, SL.wrapChars);
+        const labelX = bp.x + bp.w/2;
+        const labelY = s.data ? bp.y + 28 : bp.y + bp.h/2 + 3;
+        if (lines.length === 1) {
+          svg += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="11" font-weight="500" fill="#2d2d3a">${lines[0]}</text>`;
+        } else {
+          svg += `<text x="${labelX}" y="${labelY-6}" text-anchor="middle" font-size="11" font-weight="500" fill="#2d2d3a"><tspan x="${labelX}" dy="0">${lines[0]}</tspan><tspan x="${labelX}" dy="1.1em">${lines[1]}</tspan></text>`;
+        }
+        if (s.data) {
+          const dy = lines.length > 1 ? bp.y + bp.h - 8 : bp.y + bp.h - 12;
+          svg += `<text x="${labelX}" y="${dy}" text-anchor="middle" font-size="9" font-style="italic" fill="${SL.connStroke}">${s.data}</text>`;
+        }
       }
-      // Label
-      const label = s.label.length > 20 ? s.label.slice(0, 18) + '..' : s.label;
-      const fontSize = s.label.length > 16 ? 10 : T.fontSize;
-      const txt = flowSvgEl('text', { x: 0, y: 0, fill: '#333', 'font-size': fontSize, 'font-weight': '500', 'text-anchor': 'middle', 'dominant-baseline': 'central' });
-      txt.textContent = label;
-      txt.style.pointerEvents = 'none';
-      txt.style.userSelect = 'none';
-      g.appendChild(txt);
-      svg.appendChild(g);
     });
 
+    svg += '</svg>';
     return svg;
   }
 
@@ -3510,7 +3507,7 @@ CONFIG.bpcMapping = {
         // SVG preview
         const svgContainer = document.createElement('div');
         svgContainer.className = 'flow-svg-container';
-        svgContainer.appendChild(renderFlowSVG(existingFlow));
+        svgContainer.innerHTML = renderFlowSVG(existingFlow, l2.id.replace(/\./g, '-'));
         body.appendChild(svgContainer);
         // Actions
         const actions = document.createElement('div');

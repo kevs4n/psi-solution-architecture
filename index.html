@@ -683,12 +683,19 @@ button { font-family: inherit; cursor: pointer; }
 /* Status badges */
 .comp .status-dot {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 7px;
-  height: 7px;
+  top: 3px;
+  right: 3px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.comp .status-dot:hover {
+  transform: scale(1.5);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
 }
 .status-dot.in-scope { background: #10b981; }
 .status-dot.future { background: #3b82f6; }
@@ -1260,6 +1267,14 @@ button { font-family: inherit; cursor: pointer; }
 /* ═══════════════════════════════════════════════════════════════
    ENHANCED UX
    ═══════════════════════════════════════════════════════════════ */
+.bpc-l2-id {
+  font-size: 11px;
+  color: #8899aa;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 38px;
+}
 .bpc-l3-id {
   font-size: 10px;
   color: #8899aa;
@@ -2156,11 +2171,21 @@ CONFIG.bpcMapping = {
     el.style.background = sys.color;
     el.textContent = comp.name;
 
-    if (comp.status && comp.status !== 'in-scope') {
-      const dot = document.createElement('span');
-      dot.className = `status-dot ${comp.status}`;
-      el.appendChild(dot);
-    }
+    // Always show scope dot — click to cycle status directly
+    const dot = document.createElement('span');
+    dot.className = `status-dot ${comp.status || 'in-scope'}`;
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cycle = ['in-scope', 'future', 'out-scope', 'isv'];
+      const cur = comp.status || 'in-scope';
+      const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
+      comp.status = next;
+      el.dataset.status = next;
+      dot.className = `status-dot ${next}`;
+      renderSummary();
+      saveState();
+    });
+    el.appendChild(dot);
 
     el.addEventListener('mouseenter', (e) => showTooltip(e, comp, comp.system));
     el.addEventListener('mouseleave', hideTooltip);
@@ -2172,14 +2197,8 @@ CONFIG.bpcMapping = {
         const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
         comp.status = next;
         el.dataset.status = next;
-        // Update status dot
-        let dot = el.querySelector('.status-dot');
-        if (next === 'in-scope') {
-          if (dot) dot.remove();
-        } else {
-          if (!dot) { dot = document.createElement('span'); el.appendChild(dot); }
-          dot.className = `status-dot ${next}`;
-        }
+        const sdot = el.querySelector('.status-dot');
+        if (sdot) sdot.className = `status-dot ${next}`;
         renderSummary();
         saveState();
         return;
@@ -2202,7 +2221,7 @@ CONFIG.bpcMapping = {
     if (comp.desc) {
       html += `<div class="tooltip-desc">${comp.desc}</div>`;
     }
-    html += `<div class="tooltip-connections">Click for details \u00B7 Shift+click to cycle scope</div>`;
+    html += `<div class="tooltip-connections">Click dot to cycle scope \u00B7 Click for details</div>`;
     if (connections.length > 0) {
       html += `<div class="tooltip-connections">${connections.length} connection${connections.length > 1 ? 's' : ''}</div>`;
     }
@@ -2345,13 +2364,8 @@ CONFIG.bpcMapping = {
       const compEl = document.querySelector(`[data-comp-id="${comp.id}"]`);
       if (compEl) {
         compEl.dataset.status = next;
-        let dot = compEl.querySelector('.status-dot');
-        if (next === 'in-scope') {
-          if (dot) dot.remove();
-        } else {
-          if (!dot) { dot = document.createElement('span'); compEl.appendChild(dot); }
-          dot.className = `status-dot ${next}`;
-        }
+        const cdot = compEl.querySelector('.status-dot');
+        if (cdot) cdot.className = `status-dot ${next}`;
       }
       renderSummary();
       saveState();
@@ -2674,7 +2688,17 @@ CONFIG.bpcMapping = {
     const container = $('#bpcTreeContainer');
     container.innerHTML = '';
 
+    // Sort L1s numerically, and L2 areas within each L1
+    CONFIG.bpc.sort((a, b) => Number(a.id) - Number(b.id));
     CONFIG.bpc.forEach(l1 => {
+      l1.areas.sort((a, b) => {
+        const aSuffix = a.id.split('.')[1];
+        const bSuffix = b.id.split('.')[1];
+        const aNum = aSuffix.length === 1 ? Number(aSuffix) * 10 : Number(aSuffix);
+        const bNum = bSuffix.length === 1 ? Number(bSuffix) * 10 : Number(bSuffix);
+        return aNum - bNum;
+      });
+
       const card = document.createElement('div');
       card.className = 'bpc-l1-card';
       card.dataset.l1Id = l1.id;
@@ -2727,6 +2751,7 @@ CONFIG.bpcMapping = {
         l2Header.className = 'bpc-l2-header';
         l2Header.innerHTML = `
           <span class="bpc-l2-chevron">\u25BE</span>
+          <span class="bpc-l2-id">${l2.id}</span>
           <span class="bpc-l2-name">${l2.name}</span>
           <span class="bpc-l2-scope-summary" data-l2-id="${l2.id}"></span>
           <div class="bpc-l2-actions">

@@ -1141,8 +1141,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .bpc-l3-item:hover { background: rgba(0,0,0,0.03); }
 .bpc-scope-dot {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid rgba(0,0,0,0.1);
   cursor: pointer;
@@ -1256,6 +1256,114 @@ button { font-family: inherit; cursor: pointer; }
   .comp { break-inside: avoid; }
   .layer { break-inside: avoid; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ENHANCED UX
+   ═══════════════════════════════════════════════════════════════ */
+.bpc-l3-id {
+  font-size: 10px;
+  color: #8899aa;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  white-space: nowrap;
+  min-width: 70px;
+}
+.bpc-l2-scope-summary {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 4px;
+}
+.bpc-l2-scope-summary .mini-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.bpc-l2-scope-summary .mini-count {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+.bpc-l2-actions {
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.bpc-l2-header:hover .bpc-l2-actions { opacity: 1; }
+.bpc-l2-actions button {
+  padding: 2px 7px;
+  border: 1px solid #d4dae2;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  background: #fff;
+  color: #6b7c8d;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-family: inherit;
+}
+.bpc-l2-actions button:hover { background: #edf1f6; color: #1e3a5f; }
+
+.comp.search-match {
+  outline: 2px solid #fbbf24;
+  outline-offset: 1px;
+  z-index: 5;
+}
+
+.bpc-filter-pills {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  padding: 3px 3px 3px 8px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  border: 1px solid #e2e6ea;
+}
+.bpc-filter-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #8899aa;
+  padding-right: 4px;
+}
+.bpc-filter-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  background: transparent;
+  color: #6b7c8d;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-family: inherit;
+}
+.bpc-filter-btn:hover { background: rgba(0,0,0,0.06); }
+.bpc-filter-btn.active { background: var(--header-bg); color: #fff; }
+
+.persist-banner {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  background: #1e3a5f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.persist-banner.visible { opacity: 1; }
 </style>
 </head>
 <body>
@@ -1281,6 +1389,7 @@ button { font-family: inherit; cursor: pointer; }
     <div class="filter-pills" id="filters"></div>
     <button class="view-toggle" id="scopeOnly" title="Show only in-scope components">Scope Only</button>
     <button class="view-toggle" id="exportScope" title="Export current scope as JSON">Export Scope</button>
+    <button class="view-toggle" id="importScope" title="Import scope from JSON file">Import</button>
     <button class="view-toggle" id="resetAll" title="Reset all filters">Reset</button>
     <button class="view-toggle" id="expandAll">Expand All</button>
     <button class="view-toggle" id="collapseAll">Collapse All</button>
@@ -1326,6 +1435,13 @@ button { font-family: inherit; cursor: pointer; }
     <div class="search-box">
       <input type="text" id="bpcSearch" placeholder="Search processes..." autocomplete="off" />
     </div>
+    <div class="bpc-filter-pills">
+      <span class="bpc-filter-label">Show</span>
+      <button class="bpc-filter-btn active" data-filter="all">All</button>
+      <button class="bpc-filter-btn" data-filter="in-scope">In Scope</button>
+      <button class="bpc-filter-btn" data-filter="future">Future</button>
+      <button class="bpc-filter-btn" data-filter="unscoped">Unscoped</button>
+    </div>
     <button class="view-toggle" id="bpcExpandAll">Expand All</button>
     <button class="view-toggle" id="bpcCollapseAll">Collapse All</button>
   </div>
@@ -1345,6 +1461,10 @@ button { font-family: inherit; cursor: pointer; }
   </div>
   <div id="scopedBlueprintContainer"></div>
 </div>
+
+<!-- Hidden file input for import -->
+<input type="file" id="importFile" accept=".json" style="display:none" />
+<div class="persist-banner" id="persistBanner">State saved</div>
 
 <!-- Shared: Detail panel -->
 <div class="detail-panel" id="detailPanel">
@@ -1739,6 +1859,7 @@ CONFIG.bpcMapping = {
     searchTerm: '',
     bpcScope: {},       // { processId: 'in-scope' | 'future' | 'out-scope' }
     bpcSearchTerm: '',
+    bpcScopeFilter: 'all',
     activeTab: 'tab-sa',
     scopedDirty: true   // flag to re-render Tab 3 only when needed
   };
@@ -1751,6 +1872,31 @@ CONFIG.bpcMapping = {
       });
     });
   });
+
+  // Restore persisted state from localStorage
+  (function restoreState() {
+    try {
+      const saved = localStorage.getItem('psi-sa-state');
+      if (!saved) return;
+      const data = JSON.parse(saved);
+      if (data.bpcScope) {
+        Object.keys(data.bpcScope).forEach(k => {
+          if (state.bpcScope.hasOwnProperty(k)) state.bpcScope[k] = data.bpcScope[k];
+        });
+      }
+      if (data.componentStatuses) {
+        CONFIG.layers.forEach(layer => {
+          layer.groups.forEach(group => {
+            const apply = (comp) => {
+              if (data.componentStatuses[comp.id]) comp.status = data.componentStatuses[comp.id];
+            };
+            if (group.components) group.components.forEach(apply);
+            if (group.children) group.children.forEach(sub => sub.components.forEach(apply));
+          });
+        });
+      }
+    } catch (e) { /* ignore corrupt localStorage */ }
+  })();
 
   // ── Refs ──
   const $ = (sel) => document.querySelector(sel);
@@ -1766,6 +1912,8 @@ CONFIG.bpcMapping = {
       const tabId = this.dataset.tab;
       if (tabId === state.activeTab) return;
       state.activeTab = tabId;
+      // Close detail panel on tab switch
+      closeDetail();
       // Update buttons
       $$('.tab-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
@@ -2018,8 +2166,8 @@ CONFIG.bpcMapping = {
     el.addEventListener('mouseleave', hideTooltip);
     el.addEventListener('click', (e) => {
       if (e.shiftKey) {
-        // Shift-click: quick cycle status
-        const cycle = ['in-scope', 'future', 'out-scope'];
+        // Shift-click: quick cycle status (matches detail panel cycle)
+        const cycle = ['in-scope', 'future', 'out-scope', 'isv'];
         const cur = comp.status || 'in-scope';
         const next = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
         comp.status = next;
@@ -2033,6 +2181,7 @@ CONFIG.bpcMapping = {
           dot.className = `status-dot ${next}`;
         }
         renderSummary();
+        saveState();
         return;
       }
       openDetail(comp, `${layerName} \u203A ${groupName}`, comp.system);
@@ -2205,6 +2354,7 @@ CONFIG.bpcMapping = {
         }
       }
       renderSummary();
+      saveState();
     });
 
     detailPanel.classList.add('open');
@@ -2282,7 +2432,7 @@ CONFIG.bpcMapping = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${CONFIG.meta.title.replace(/\s+/g, '-').toLowerCase()}-scope.json`;
+    a.download = `${CONFIG.meta.title.replace(/\s+/g, '-').toLowerCase()}-scope-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -2310,6 +2460,7 @@ CONFIG.bpcMapping = {
       const matchesSearch = !state.searchTerm ||
         el.textContent.toLowerCase().includes(state.searchTerm);
       el.classList.toggle('dimmed', !matchesSystem || !matchesStatus || !matchesSearch);
+      el.classList.toggle('search-match', !!state.searchTerm && matchesSearch && matchesSystem && matchesStatus);
     });
     $$('#tab-sa .sidebar-item').forEach(el => {
       const system = el.dataset.system;
@@ -2454,8 +2605,12 @@ CONFIG.bpcMapping = {
     });
   }
 
+  let _resizeTimer;
   window.addEventListener('resize', () => {
-    if (state.activeFlows.size > 0) drawConnections();
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(() => {
+      if (state.activeFlows.size > 0) drawConnections();
+    }, 150);
   });
 
   // ── Layer Collapse / Expand ──
@@ -2548,12 +2703,12 @@ CONFIG.bpcMapping = {
               state.bpcScope[l3.id] = scope;
             });
           });
-          // Update dots in this card
           card.querySelectorAll('.bpc-scope-dot').forEach(dot => {
             dot.dataset.scope = scope;
           });
           updateBpcSummary();
           state.scopedDirty = true;
+          saveState();
         });
       });
 
@@ -2565,7 +2720,7 @@ CONFIG.bpcMapping = {
 
       l1.areas.forEach(l2 => {
         const l2Row = document.createElement('div');
-        l2Row.className = 'bpc-l2-row';
+        l2Row.className = 'bpc-l2-row l2-collapsed';
         l2Row.dataset.l2Id = l2.id;
 
         const l2Header = document.createElement('div');
@@ -2573,10 +2728,34 @@ CONFIG.bpcMapping = {
         l2Header.innerHTML = `
           <span class="bpc-l2-chevron">\u25BE</span>
           <span class="bpc-l2-name">${l2.name}</span>
+          <span class="bpc-l2-scope-summary" data-l2-id="${l2.id}"></span>
+          <div class="bpc-l2-actions">
+            <button data-l2-action="in" title="All In Scope">In</button>
+            <button data-l2-action="future" title="All Future">Fut</button>
+            <button data-l2-action="out" title="All Out">Out</button>
+          </div>
           <span class="bpc-l2-count">${l2.processes.length}</span>
         `;
 
-        l2Header.addEventListener('click', () => {
+        // L2 bulk action handlers
+        l2Header.querySelectorAll('[data-l2-action]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const scope = btn.dataset.l2Action === 'in' ? 'in-scope' : btn.dataset.l2Action === 'future' ? 'future' : 'out-scope';
+            l2.processes.forEach(l3 => {
+              state.bpcScope[l3.id] = scope;
+            });
+            l2Row.querySelectorAll('.bpc-scope-dot').forEach(dot => {
+              dot.dataset.scope = scope;
+            });
+            updateBpcSummary();
+            state.scopedDirty = true;
+            saveState();
+          });
+        });
+
+        l2Header.addEventListener('click', (e) => {
+          if (e.target.closest('.bpc-l2-actions')) return;
           l2Row.classList.toggle('l2-collapsed');
         });
 
@@ -2598,6 +2777,7 @@ CONFIG.bpcMapping = {
 
           l3Item.innerHTML = `
             <span class="bpc-scope-dot" data-scope="${currentScope}" data-id="${l3.id}" title="Click to cycle scope"></span>
+            <span class="bpc-l3-id">${l3.id}</span>
             <span class="bpc-l3-name">${l3.name}</span>
             <span class="bpc-l3-products">${(l3.products || []).join(', ')}</span>
           `;
@@ -2613,6 +2793,7 @@ CONFIG.bpcMapping = {
             state.bpcScope[l3.id] = next;
             updateBpcSummary();
             state.scopedDirty = true;
+            saveState();
           });
 
           l3List.appendChild(l3Item);
@@ -2638,26 +2819,66 @@ CONFIG.bpcMapping = {
       <span class="bpc-stat"><span class="bpc-stat-dot" style="background:var(--scope-out)"></span>${counts['out-scope']} out of scope</span>
       <span style="margin-left:auto;font-size:11px;color:#8899aa">${Object.keys(state.bpcScope).length} total processes</span>
     `;
+    // Update L2 scope summary badges
+    $$('.bpc-l2-scope-summary').forEach(el => {
+      const l2Id = el.dataset.l2Id;
+      let inCount = 0, futCount = 0;
+      for (const l1 of CONFIG.bpc) {
+        for (const area of l1.areas) {
+          if (area.id === l2Id) {
+            area.processes.forEach(l3 => {
+              const s = state.bpcScope[l3.id];
+              if (s === 'in-scope') inCount++;
+              else if (s === 'future') futCount++;
+            });
+            break;
+          }
+        }
+      }
+      let html = '';
+      if (inCount > 0) html += `<span class="mini-dot" style="background:var(--scope-in)"></span><span class="mini-count" style="color:#10b981">${inCount}</span>`;
+      if (futCount > 0) html += `<span class="mini-dot" style="background:var(--scope-future);${inCount > 0 ? 'margin-left:3px' : ''}"></span><span class="mini-count" style="color:#3b82f6">${futCount}</span>`;
+      el.innerHTML = html;
+    });
     updateTabBadges();
+    // Re-apply BPC filters if active
+    applyBpcFilters();
   }
 
   // BPC Search
   $('#bpcSearch').addEventListener('input', (e) => {
     state.bpcSearchTerm = e.target.value.toLowerCase().trim();
-    applyBpcSearch();
+    applyBpcFilters();
   });
 
-  function applyBpcSearch() {
+  // BPC Scope Filter buttons
+  $$('.bpc-filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      $$('.bpc-filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      state.bpcScopeFilter = this.dataset.filter;
+      applyBpcFilters();
+    });
+  });
+
+  function applyBpcFilters() {
     const term = state.bpcSearchTerm;
+    const scopeFilter = state.bpcScopeFilter;
     $$('.bpc-l1-card').forEach(card => {
       let cardHasMatch = false;
       card.querySelectorAll('.bpc-l2-row').forEach(l2Row => {
         let l2HasMatch = false;
         l2Row.querySelectorAll('.bpc-l3-item').forEach(l3Item => {
           const text = l3Item.dataset.searchText;
-          const matches = !term || text.includes(term);
-          l3Item.classList.toggle('bpc-hidden', !matches);
-          if (matches) l2HasMatch = true;
+          const l3Id = l3Item.dataset.l3Id;
+          const scope = state.bpcScope[l3Id] || 'out-scope';
+          const matchesSearch = !term || text.includes(term);
+          const matchesFilter = scopeFilter === 'all' ||
+            (scopeFilter === 'unscoped' && scope === 'out-scope') ||
+            scope === scopeFilter;
+          const visible = matchesSearch && matchesFilter;
+          l3Item.classList.toggle('bpc-hidden', !visible);
+          if (visible) l2HasMatch = true;
         });
         l2Row.classList.toggle('bpc-hidden', !l2HasMatch);
         if (l2HasMatch) cardHasMatch = true;
@@ -2729,6 +2950,24 @@ CONFIG.bpcMapping = {
       container.innerHTML = `<div class="scoped-empty"><strong>No processes scoped yet.</strong><br>Go to the BPC Process Scope tab and mark processes as in-scope or future to see relevant SA components here.</div>`;
       return;
     }
+
+    // Blueprint header for Tab 3
+    const scopeHeader = document.createElement('div');
+    scopeHeader.className = 'blueprint';
+    scopeHeader.style.marginBottom = '16px';
+    scopeHeader.innerHTML = `
+      <div class="bp-header">
+        <div class="bp-header-left">
+          <div class="bp-header-bar"></div>
+          <div>
+            <div class="bp-title">${CONFIG.meta.title}</div>
+            <div class="bp-subtitle">${CONFIG.meta.subtitle} \u2014 Scoped View</div>
+          </div>
+        </div>
+        <div class="bp-badge" style="background:#2d6a4f">SCOPED BLUEPRINT</div>
+      </div>
+    `;
+    container.appendChild(scopeHeader);
 
     // For each layer, filter groups/components to only those linked via bpcMapping
     CONFIG.layers.forEach(layer => {
@@ -2883,6 +3122,95 @@ CONFIG.bpcMapping = {
   // Scoped Export
   $('#scopedExport').addEventListener('click', () => {
     exportScopeJSON();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // PERSISTENCE — localStorage save/restore
+  // ═══════════════════════════════════════════════════════════════
+  function saveState() {
+    try {
+      const componentStatuses = {};
+      CONFIG.layers.forEach(layer => {
+        layer.groups.forEach(group => {
+          const save = (comp) => { componentStatuses[comp.id] = comp.status || 'in-scope'; };
+          if (group.components) group.components.forEach(save);
+          if (group.children) group.children.forEach(sub => sub.components.forEach(save));
+        });
+      });
+      localStorage.setItem('psi-sa-state', JSON.stringify({
+        bpcScope: state.bpcScope,
+        componentStatuses
+      }));
+      showPersistBanner('State saved');
+    } catch (e) { /* quota exceeded */ }
+  }
+
+  function showPersistBanner(msg) {
+    const banner = $('#persistBanner');
+    if (!banner) return;
+    banner.textContent = msg || 'State saved';
+    banner.classList.add('visible');
+    clearTimeout(banner._hideTimer);
+    banner._hideTimer = setTimeout(() => banner.classList.remove('visible'), 1200);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // IMPORT — Load scope from exported JSON
+  // ═══════════════════════════════════════════════════════════════
+  $('#importScope').addEventListener('click', () => { $('#importFile').click(); });
+
+  $('#importFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.bpcScope) {
+          Object.keys(data.bpcScope).forEach(k => {
+            if (state.bpcScope.hasOwnProperty(k)) state.bpcScope[k] = data.bpcScope[k];
+          });
+        }
+        if (data.components) {
+          const statusMap = {};
+          data.components.forEach(c => { statusMap[c.id] = c.status; });
+          CONFIG.layers.forEach(layer => {
+            layer.groups.forEach(group => {
+              const apply = (comp) => { if (statusMap[comp.id]) comp.status = statusMap[comp.id]; };
+              if (group.components) group.components.forEach(apply);
+              if (group.children) group.children.forEach(sub => sub.components.forEach(apply));
+            });
+          });
+        }
+        // Re-render
+        $('#layersStack').innerHTML = '';
+        renderLayers();
+        renderSummary();
+        renderBpcTree();
+        updateBpcSummary();
+        state.scopedDirty = true;
+        saveState();
+        showPersistBanner('Scope imported');
+      } catch (err) {
+        alert('Invalid scope file: ' + err.message);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // KEYBOARD SHORTCUTS
+  // ═══════════════════════════════════════════════════════════════
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // Alt+1/2/3 for tab switching
+    if (e.altKey && (e.key === '1' || e.key === '2' || e.key === '3')) {
+      e.preventDefault();
+      const tabs = ['tab-sa', 'tab-bpc', 'tab-scoped'];
+      const btn = document.querySelector(`[data-tab="${tabs[parseInt(e.key) - 1]}"]`);
+      if (btn) btn.click();
+    }
   });
 
   // ═══════════════════════════════════════════════════════════════
